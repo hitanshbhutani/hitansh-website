@@ -1,0 +1,700 @@
+/* ==========================================================================
+   hitansh bhutani - personal site
+   style.css
+
+   Look: cream paper, pastel blocks, everything monospace. Cards sit at
+   slightly wrong angles on purpose and straighten up when you hover them.
+
+   1.  tokens
+   2.  base (element selectors)
+   3.  layout helpers
+   4.  nav
+   5.  hero
+   6.  section headings
+   7.  about + stats
+   8.  cards
+   9.  timeline
+   10. contact
+   11. footer
+   12. responsive
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   Change these and the whole page changes with them.
+   -------------------------------------------------------------------------- */
+:root {
+  /* paper + ink */
+  --paper:    #fbf7f0;
+  --paper-2:  #f4eee4;   /* the slightly darker bands */
+  --ink:      #3d3a36;   /* body text */
+  --ink-soft: #6b665f;   /* dates, labels, quieter stuff */
+  --line:     #ddd4c6;   /* borders */
+  --accent:   #9c554f;   /* links - a dusty rose, dark enough to read */
+
+  /* pastels, each with a deeper version for the little offset shadows */
+  --pink:        #f6c9c6;
+  --pink-deep:   #e8a9a4;
+  --mint:        #bfe0d2;
+  --mint-deep:   #9ccfba;
+  --butter:      #f7e6ad;
+  --butter-deep: #eed88f;
+  --lilac:       #d7cdea;
+  --lilac-deep:  #bfb1dd;
+
+  /* type */
+  --font-head: "Space Mono", "Courier New", monospace;
+  --font-body: "IBM Plex Mono", "Consolas", "Courier New", monospace;
+
+  /* spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 3.5rem;
+  --space-xl: 5rem;
+
+  --radius: 6px;
+  --max-width: 1000px;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. BASE - element selectors
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;   /* so the sticky nav doesn't sit on headings */
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0 0 var(--space-sm);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  background-color: var(--butter);
+  text-decoration: none;
+}
+
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+strong {
+  font-weight: 600;
+}
+
+/* highlighter pen. one class per colour so I can mix them up */
+mark {
+  padding: 0.05em 0.25em;
+  border-radius: 3px;
+  background-color: var(--butter);
+  color: inherit;
+}
+
+.mark-mint  { background-color: var(--mint); }
+.mark-pink  { background-color: var(--pink); }
+.mark-lilac { background-color: var(--lilac); }
+
+a:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. LAYOUT HELPERS
+   -------------------------------------------------------------------------- */
+.section {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: var(--space-xl) var(--space-md);
+}
+
+/* full-width tinted band, content column still centred inside it */
+.section-alt {
+  max-width: none;
+  background-color: var(--paper-2);
+  border-block: 1px dashed var(--line);
+}
+
+.section-alt > * {
+  max-width: calc(var(--max-width) - var(--space-md) * 2);
+  margin-inline: auto;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. NAV
+   position: sticky pins it once you scroll past. No blur, no shadow.
+   -------------------------------------------------------------------------- */
+#site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--paper);
+  border-bottom: 1px dashed var(--line);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: 0.9rem var(--space-md);
+}
+
+.nav-brand {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+  text-decoration: none;
+  background-color: var(--pink);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.nav-brand:hover {
+  background-color: var(--pink-deep);
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.nav-links a {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+/* each link gets a different pastel on hover, in order */
+.nav-links li:nth-child(1) a:hover { background-color: var(--butter); }
+.nav-links li:nth-child(2) a:hover { background-color: var(--mint); }
+.nav-links li:nth-child(3) a:hover { background-color: var(--lilac); }
+.nav-links li:nth-child(4) a:hover { background-color: var(--pink); }
+.nav-links li:nth-child(5) a:hover { background-color: var(--butter); }
+
+.nav-links a:hover {
+  color: var(--ink);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. HERO
+   Sized by its padding rather than 100vh - it's a personal page, not a
+   landing page, and there's no reason to make you scroll past a whole screen.
+   -------------------------------------------------------------------------- */
+#hero {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-sm);
+}
+
+.hero-title {
+  font-size: clamp(2.6rem, 9vw, 4.6rem);
+  letter-spacing: -0.04em;
+  margin-bottom: var(--space-sm);
+}
+
+.hero-role {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-md);
+}
+
+.hero-blurb {
+  max-width: 54ch;
+  font-size: 1.05rem;
+  margin-bottom: var(--space-md);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* Buttons: a flat pastel block with a solid offset shadow, no gradient.
+   Pressing one nudges it into its own shadow. */
+.btn {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background-color: var(--mint);
+  box-shadow: 3px 3px 0 var(--mint-deep);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.btn:hover {
+  background-color: var(--mint);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--mint-deep);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--mint-deep);
+}
+
+.btn-quiet {
+  background-color: transparent;
+  box-shadow: 3px 3px 0 var(--line);
+}
+
+.btn-quiet:hover {
+  background-color: var(--paper-2);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. SECTION HEADINGS
+   -------------------------------------------------------------------------- */
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-lg);
+  padding-bottom: 0.6rem;
+  border-bottom: 1px dashed var(--line);
+}
+
+.hash {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. ABOUT + STATS
+   -------------------------------------------------------------------------- */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.lead {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.lead em {
+  background-color: var(--lilac);
+  font-style: italic;
+  padding: 0 0.15em;
+}
+
+/* sticky-note row. auto-fit means they reflow on their own as it narrows */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.stat {
+  padding: var(--space-sm);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+/* four different pastels, in order */
+.stat:nth-child(1) { background-color: var(--pink);   box-shadow: 3px 3px 0 var(--pink-deep);   transform: rotate(-0.8deg); }
+.stat:nth-child(2) { background-color: var(--mint);   box-shadow: 3px 3px 0 var(--mint-deep);   transform: rotate(0.6deg);  }
+.stat:nth-child(3) { background-color: var(--butter); box-shadow: 3px 3px 0 var(--butter-deep); transform: rotate(-0.5deg); }
+.stat:nth-child(4) { background-color: var(--lilac);  box-shadow: 3px 3px 0 var(--lilac-deep);  transform: rotate(0.9deg);  }
+
+.stat-number {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. CARDS - skills and school
+   -------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+.card-grid-two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.card {
+  padding: var(--space-md);
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--line);
+  /* every card is slightly crooked - see the nth-child rules below */
+  transition: transform 150ms ease;
+}
+
+/* alternate the tilt so the grid doesn't lean all one way */
+.card:nth-child(odd)  { transform: rotate(-0.6deg); }
+.card:nth-child(even) { transform: rotate(0.5deg);  }
+
+/* hovering straightens the card out */
+.card:hover {
+  transform: rotate(0deg);
+}
+
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+/* little pastel tag above each title */
+.card-kicker {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  color: var(--ink);
+}
+
+.card:nth-child(1) .card-kicker { background-color: var(--pink);   }
+.card:nth-child(2) .card-kicker { background-color: var(--mint);   }
+.card:nth-child(3) .card-kicker { background-color: var(--butter); }
+.card:nth-child(4) .card-kicker { background-color: var(--lilac);  }
+
+.card-title {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.92rem;
+  margin-bottom: 0;
+}
+
+.card-list {
+  margin-top: var(--space-sm);
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* bullets drawn with ::before instead of list-style */
+.card-list li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: 0.92rem;
+}
+
+.card-list li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+  color: var(--ink-soft);
+}
+
+.card-edu {
+  background-color: var(--paper);
+}
+
+.edu-date {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. TIMELINE
+   A dashed line down the left with a square per job.
+   -------------------------------------------------------------------------- */
+.timeline {
+  position: relative;
+  display: grid;
+  gap: var(--space-lg);
+  padding-left: var(--space-md);
+  border-left: 1px dashed var(--line);
+}
+
+.timeline-item {
+  position: relative;
+}
+
+/* the square marker, pulled back onto the dashed line */
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: calc(-1 * var(--space-md) - 5px);
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.timeline-item:nth-child(1)::before { background-color: var(--pink);   }
+.timeline-item:nth-child(2)::before { background-color: var(--mint);   }
+.timeline-item:nth-child(3)::before { background-color: var(--butter); }
+
+.timeline-date {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+.entry {
+  padding: var(--space-md);
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--line);
+}
+
+.entry-role {
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.entry-org {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+.entry-place {
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.entry-points {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.entry-points li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: 0.92rem;
+}
+
+.entry-points li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+  color: var(--ink-soft);
+}
+
+
+/* --------------------------------------------------------------------------
+   10. CONTACT
+   -------------------------------------------------------------------------- */
+.contact-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  align-items: center;
+  padding: var(--space-md);
+  background-color: var(--lilac);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 5px 5px 0 var(--lilac-deep);
+}
+
+.contact-pitch {
+  font-family: var(--font-head);
+  font-size: 1.15rem;
+  line-height: 1.45;
+  margin-bottom: 0;
+}
+
+.contact-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.contact-list li {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--space-sm);
+  align-items: baseline;
+  font-size: 0.92rem;
+}
+
+.contact-label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+/* links sit on the lilac panel, so give them a paper-coloured hover */
+.contact-list a:hover {
+  background-color: var(--paper);
+}
+
+
+/* --------------------------------------------------------------------------
+   11. FOOTER
+   -------------------------------------------------------------------------- */
+#site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: var(--space-md);
+  border-top: 1px dashed var(--line);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+#site-footer p {
+  margin: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   12. RESPONSIVE
+   -------------------------------------------------------------------------- */
+
+/* tablet */
+@media (max-width: 860px) {
+  .card-grid,
+  .card-grid-two {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-grid,
+  .contact-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding-block: var(--space-lg);
+  }
+}
+
+/* phone */
+@media (max-width: 620px) {
+  /* the nav wraps to two rows down here, so anchors need to stop lower */
+  html {
+    scroll-padding-top: 120px;
+  }
+
+  .nav-inner {
+    justify-content: center;
+    padding: 0.7rem var(--space-sm);
+  }
+
+  .nav-links {
+    justify-content: center;
+  }
+
+  .nav-links a {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.78rem;
+  }
+
+  .card-grid,
+  .card-grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .card-wide {
+    grid-column: auto;
+  }
+
+  .section,
+  #hero {
+    padding-inline: var(--space-sm);
+  }
+
+  .contact-list li {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  #site-footer {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* if someone has asked their system to cut down on movement, do that */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    transition-duration: 0.01ms !important;
+  }
+
+  /* straighten everything - the tilt is decoration, not information */
+  .card,
+  .stat {
+    transform: none !important;
+  }
+}
