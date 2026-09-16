@@ -17,8 +17,8 @@ window.CHANNEL = {
 
 // The account shown as signed in, top right.
 window.VIEWER = {
-  name: "District",
-  handle: "@districtculture",
+  name: "District Culture",
+  handle: "@district.culture",
   avatar: "img/viewer-avatar.jpg",
 };
 
@@ -55,7 +55,11 @@ window.VIDEOS = [
 
 window.SHORTS_SHELF_TITLE = "Work";
 
+// What the play button says on items that have no `url`.
+window.NO_URL_MESSAGE = "Only Parallaxis, Maya and Film have URLs.";
+
 // `fit: "contain"` shows the whole picture instead of cropping it to fill.
+// `url` is where the play button offers to take people; items without one say so.
 window.SHORTS = [
   {
     id: "parallaxis",
@@ -63,9 +67,9 @@ window.SHORTS = [
     title: "Parallaxis",
     subtitle: "Jun 2026 - now",
     views: "TBA",
-    uploaded: null,
-    published: "2026-06-01",
+    uploaded: "everyday (unless hired)",
     thumbnail: "img/parallaxis.jpg",
+    url: "https://www.youtube.com/@TheParallaxis",
     tags: ["film", "video-essays", "editing", "writing"],
     text: [
       "PLACEHOLDER - paste the Parallaxis text here.",
@@ -78,8 +82,9 @@ window.SHORTS = [
     title: "Maya Narrative Universe",
     subtitle: "Department of Lore, Goa",
     views: "127K",
-    uploaded: "1 year ago",
+    uploaded: "2 to 14 months ago",
     thumbnail: "img/maya.jpg",
+    url: "https://entermaya.com",
     tags: ["world-building", "writing", "directing"],
     text: [
       "PLACEHOLDER - paste the Maya Narrative Universe text here.",
@@ -87,16 +92,16 @@ window.SHORTS = [
     ],
   },
   {
-    id: "academic",
+    id: "education",
     type: "short",
-    title: "Academic",
+    title: "Education",
     subtitle: "IIM Bangalore, IB Diploma",
     views: "148 crore",
-    uploaded: "2 years later",
+    uploaded: "forever",
     thumbnail: "img/academic.jpg",
     tags: ["education", "debate"],
     text: [
-      "PLACEHOLDER - paste the Academic text here.",
+      "PLACEHOLDER - paste the Education text here.",
       "BBA in Digital Business and Entrepreneurship at IIM Bangalore. International Baccalaureate diploma from Hiranandani Upscale School, Chennai.",
     ],
   },
@@ -108,6 +113,7 @@ window.SHORTS = [
     views: "1K",
     uploaded: "2 to 4 years ago",
     thumbnail: "img/film.jpg",
+    url: "https://www.youtube.com/watch?v=MVwDkSDxSMQ",
     tags: ["film", "directing", "writing", "editing"],
     text: [
       "PLACEHOLDER - paste the Film text here.",
@@ -116,15 +122,5 @@ window.SHORTS = [
   },
 ];
 
-// The chip bar under the header. `tag` matches the tags above.
-window.CHIPS = [
-  { label: "All", tag: null },
-  { label: "Film", tag: "film" },
-  { label: "Writing", tag: "writing" },
-  { label: "Directing", tag: "directing" },
-  { label: "Editing", tag: "editing" },
-  { label: "Video essays", tag: "video-essays" },
-  { label: "World-building", tag: "world-building" },
-  { label: "Debate", tag: "debate" },
-  { label: "Education", tag: "education" },
-];
+// The chip bar under the header.
+window.CHIPS = [{ label: "All", tag: null }];

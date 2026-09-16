@@ -9,11 +9,12 @@ Everything that is text lives in `js/data.js`:
 - `CHANNEL` - name, picture, banner, and the e-mail and phone shown by Hire
 - `VIEWER` - the signed-in account in the top right (District)
 - `VIDEOS` - the two long videos, Mission and Origin
-- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Academic, Film
+- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Education, Film
 - `text` on each one is what shows when it's opened, one string per paragraph
 - `tags` decide which chip (Film, Writing...) each one shows up under
 - `thumbnail` is the picture in `img/`, `views` is the view count, and `uploaded` is the
   date text shown after it (always in lower case)
+- `url` is where the play button offers to go; items without one show `NO_URL_MESSAGE`
 
 Search reads straight from `text` and titles, so there's nothing else to update.
 
@@ -24,7 +25,9 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 - `css/pages.css` - home grid, shorts, watch page, search results, channel page
 - `js/data.js` - content
 - `img/` - thumbnails, channel picture and banner, resized for the web
-- `fonts/` - League Gothic Condensed, used for the logo
+- `img/logo-wordmark.png` - the word Districtansh set in Alt Gothic ATF Demi, used as
+  the logo. The font is licensed for images like this but not for putting the font file
+  on a website, so it isn't in the repo. To change the word, render a new picture.
 - `js/search.js` - search and autocomplete
 - `js/views.js` - builds each page
 - `js/app.js` - routing, search box, buttons
@@ -34,7 +37,7 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 
 - `/` home, `/?tag=film` filtered by a chip
 - `/watch?v=mission`, `/watch?v=origin`
-- `/work/parallaxis`, `/work/maya`, `/work/academic`, `/work/film` - one feed that scrolls
+- `/work/parallaxis`, `/work/maya`, `/work/education`, `/work/film` - one feed that scrolls
   item by item with the wheel, a trackpad or a swipe
 - `/results?search_query=...`
 - `/@hitanshbhutani` channel page, with `/beliefs` and `/work` tabs

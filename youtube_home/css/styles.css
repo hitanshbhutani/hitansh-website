@@ -1,11 +1,3 @@
-/* ---------- logo font ---------- */
-@font-face {
-  font-family: "Districtansh Logo";
-  src: local("LeagueGothic-CondensedRegular"), local("League Gothic Condensed Regular"),
-    url("../fonts/LeagueGothic-CondensedRegular.otf") format("opentype");
-  font-display: swap;
-}
-
 /* ---------- tokens ---------- */
 :root {
   --bg: #ffffff;
@@ -155,18 +147,18 @@ img { max-width: 100%; display: block; }
   position: relative;
 }
 .logo-mark svg { width: 29px; height: 20px; display: block; }
-/* League Gothic Condensed is much narrower than the usual wordmark, so it is
-   widened by --logo-stretch; app.js adds the matching space after it */
+/* The wordmark is a picture of the word set in Alt Gothic ATF Demi (the font file
+   itself can't be published). It is used as a mask and filled with the text colour,
+   so it follows the light and dark themes. The real text stays for screen readers. */
 .logo-word {
-  --logo-stretch: 1.65;
-  display: inline-block;
-  font-family: "Districtansh Logo", "League Gothic", "Arial Narrow", sans-serif;
-  font-weight: 400;
-  font-size: 25px;
-  line-height: 20px;
+  display: block;
+  width: 104px;
+  height: 19.25px;
   margin-left: 4px;
-  transform: scaleX(var(--logo-stretch));
-  transform-origin: left center;
+  font-size: 0;
+  background-color: currentColor;
+  -webkit-mask: url("../img/logo-wordmark.png") no-repeat 0 0 / 100% 100%;
+  mask: url("../img/logo-wordmark.png") no-repeat 0 0 / 100% 100%;
 }
 .logo-cc {
   font-size: 10px;
@@ -539,7 +531,28 @@ body.drawer-open .drawer-head { display: flex; }
   background: var(--bg-raised);
   color: var(--text);
 }
-#hire-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+#hire-dialog::backdrop, #play-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+
+/* ---------- play dialog ---------- */
+#play-dialog {
+  width: min(400px, calc(100vw - 32px));
+  padding: 24px 16px 12px 24px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--bg-raised);
+  color: var(--text);
+}
+#play-text { margin: 0 8px 24px 0; font-size: 16px; line-height: 22px; overflow-wrap: anywhere; }
+#play-text b { font-weight: 500; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.text-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  font-weight: 500;
+}
+.text-btn:hover { background: var(--tint); }
+.text-btn.primary { color: var(--link); }
 .dialog-close { position: absolute; top: 12px; right: 12px; }
 .hire-lines p {
   display: flex;
@@ -592,7 +605,7 @@ body.drawer-open .drawer-head { display: flex; }
   .logo-cc { display: none; }
   #bell-btn { display: none; }
   .logo { padding: 18px 6px 18px 10px; }
-  .logo-word { font-size: 22px; }
+  .logo-word { width: 91px; height: 16.85px; }
 }
 
 @media (max-width: 350px) {

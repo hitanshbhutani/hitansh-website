@@ -84,6 +84,10 @@ const V = (() => {
   const badge = (item) =>
     `<span class="badge">${item.type === "short" ? "WORK" : Search.duration(item)}</span>`;
 
+  // sits on top of a thumbnail, outside its link, so pressing it doesn't open the page
+  const playBtn = (item, cls = "") =>
+    `<button class="play-btn ${cls}" data-play="${item.id}" aria-label="Play ${escapeHtml(item.title)}">${icon("play")}</button>`;
+
   const menuBtn = (item) =>
     `<button class="icon-btn card-menu" data-menu="${item.id}" aria-label="Action menu">${icon("more")}</button>`;
 
@@ -91,9 +95,12 @@ const V = (() => {
   function videoCard(item) {
     return `
       <div class="card">
-        <a class="card-link" href="${href(item)}" data-link>
-          <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
-        </a>
+        <div class="thumb-wrap">
+          <a class="card-link" href="${href(item)}" data-link>
+            <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
+          </a>
+          ${playBtn(item)}
+        </div>
         <div class="details">
           <a href="${ch().handle}" data-link aria-label="${escapeHtml(ch().name)}">${avatar()}</a>
           <div>
@@ -109,9 +116,12 @@ const V = (() => {
   function shortCard(item, query) {
     return `
       <div class="short-card">
-        <a href="${href(item, query)}" data-link>
-          <div class="short-thumb">${thumb(item, false)}</div>
-        </a>
+        <div class="thumb-wrap">
+          <a href="${href(item, query)}" data-link>
+            <div class="short-thumb">${thumb(item, false)}</div>
+          </a>
+          ${playBtn(item)}
+        </div>
         <div class="short-meta">
           <a href="${href(item, query)}" data-link><h3 class="v-title">${escapeHtml(item.title)}</h3></a>
           <div class="v-meta">${metaLine(item)}</div>
@@ -130,9 +140,12 @@ const V = (() => {
     const snippet = query ? Search.snippet(item, query) : escapeHtml(item.text.join(" ").slice(0, 160)) + "...";
     return `
       <div class="row">
-        <a class="thumb-link" href="${link}" data-link style="display:contents">
-          <div class="thumb">${thumb(item, true)}${badge(item)}</div>
-        </a>
+        <div class="thumb-wrap">
+          <a href="${link}" data-link>
+            <div class="thumb">${thumb(item, true)}${badge(item)}</div>
+          </a>
+          ${playBtn(item)}
+        </div>
         <div class="row-body">
           <a href="${link}" data-link><h3 class="row-title">${escapeHtml(item.title)}</h3></a>
           <div class="v-meta" style="font-size:12px;line-height:18px">${metaLine(item)}</div>
@@ -147,9 +160,12 @@ const V = (() => {
   function compact(item) {
     return `
       <div class="compact">
-        <a href="${href(item)}" data-link style="display:contents">
-          <div class="thumb">${thumb(item, true)}${badge(item)}</div>
-        </a>
+        <div class="thumb-wrap">
+          <a href="${href(item)}" data-link>
+            <div class="thumb">${thumb(item, true)}${badge(item)}</div>
+          </a>
+          ${playBtn(item, "small")}
+        </div>
         <div class="compact-body">
           <a href="${href(item)}" data-link><h3 class="compact-title">${escapeHtml(item.title)}</h3></a>
           <div class="v-meta">${channelName()}</div>
@@ -221,11 +237,11 @@ const V = (() => {
           <div class="player" id="player">
             ${thumb(item, true)}
             ${spinner}
-            <button class="player-play" id="player-play" aria-label="Read">${icon("play")}</button>
+            ${playBtn(item, "big")}
             <div class="player-bar">
               <div class="scrub"><i id="scrub" style="width:0%"></i></div>
               <div class="controls">
-                <button class="icon-btn" id="ctl-play" aria-label="Read">${icon("play")}</button>
+                <button class="icon-btn" data-play="${item.id}" aria-label="Play">${icon("play")}</button>
                 <button class="icon-btn" id="ctl-next" aria-label="Next">${icon("next")}</button>
                 <button class="icon-btn" aria-label="Volume">${icon("volume")}</button>
                 <span class="time"><span id="time-now">0:00</span> / ${Search.duration(item)}</span>
@@ -274,9 +290,10 @@ const V = (() => {
           <div class="reel-video loading">
             ${thumb(item, false)}
             ${spinner}
+            ${playBtn(item, "big")}
             <div class="reel-overlay">
               <div class="owner-row">
-                <a href="${ch().handle}" data-link class="owner-link">${avatar()}<span>${escapeHtml(ch().handle)}</span>${verified()}</a>
+                <a href="${ch().handle}" data-link class="owner-link">${avatar()}<span>${escapeHtml(ch().name)}</span>${verified()}</a>
                 <button class="sub-btn" data-action="hire">Hire</button>
               </div>
               <h2 class="reel-title">${escapeHtml(item.title)}</h2>

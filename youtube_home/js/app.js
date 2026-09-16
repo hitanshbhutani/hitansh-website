@@ -95,6 +95,8 @@
   const redirect = new URLSearchParams(location.search).get("redirect");
   if (redirect) history.replaceState({}, "", redirect.replace(/^[/\\]+/, ""));
 
+  const RENAMED = { academic: "education" };
+
   // how long a video takes to "start" after it's clicked or scrolled to
   const VST = 800;
   let playerTimer = 0;
@@ -160,9 +162,10 @@
       title = item.title + " - " + C.name;
       setupWatch(item, instant);
       if (!instant) navProgress();
-    } else if (/^\/(work|shorts)(\/|$)/.test(path) && (!path.split("/")[2] || V.byId(path.split("/")[2]))) {
-      // old /shorts/ links still open, under their /work/ address
-      const id = path.split("/")[2] || window.SHORTS[0].id;
+    } else if (/^\/(work|shorts)(\/|$)/.test(path) && (!path.split("/")[2] || V.byId(RENAMED[path.split("/")[2]] || path.split("/")[2]))) {
+      // old /shorts/ and renamed links still open, under their current /work/ address
+      const given = path.split("/")[2];
+      const id = RENAMED[given] || given || window.SHORTS[0].id;
       if (path !== "/work/" + id) history.replaceState({}, "", "work/" + id + location.search);
       const index = window.SHORTS.findIndex((s) => s.id === id);
       page.innerHTML = V.shorts(index, query);
@@ -215,14 +218,7 @@
     });
     desc.addEventListener("click", () => desc.classList.contains("clamped") && collapse(false));
 
-    const toText = () => {
-      collapse(false);
-      const top = desc.getBoundingClientRect().top + window.scrollY - 72;
-      window.scrollTo({ top, behavior: "smooth" });
-    };
-    $("#player-play").addEventListener("click", toText);
-    $("#ctl-play").addEventListener("click", toText);
-    $("#player .thumb-img").addEventListener("click", toText);
+    $("#player .thumb-img").addEventListener("click", () => openPlay(item.id));
 
     const all = [...window.VIDEOS, ...window.SHORTS];
     const next = all[(all.findIndex((x) => x.id === item.id) + 1) % all.length];
@@ -369,6 +365,9 @@
 
     const reel = e.target.closest("[data-reel]");
     if (reel) return reel.disabled || scrollReel(+reel.dataset.reel);
+
+    const playButton = e.target.closest("[data-play]");
+    if (playButton) return openPlay(playButton.dataset.play);
 
     const menu = e.target.closest("[data-menu]");
     if (menu) {
@@ -518,16 +517,49 @@
     <p>${icon("mail")}<span>E-mail: ${escapeHtml(C.email)}</span></p>
     <p>${icon("phone")}<span>Phone: ${escapeHtml(C.phone)}</span></p>`;
 
-  function openHire() {
+  function openDialog(d) {
     closePopup();
-    if (hire.showModal) hire.showModal();
-    else hire.setAttribute("open", "");
+    if (d.showModal) d.showModal();
+    else d.setAttribute("open", "");
   }
-  const closeHire = () => (hire.close ? hire.close() : hire.removeAttribute("open"));
-  $("#hire-close").addEventListener("click", closeHire);
+  const closeDialog = (d) => (d.close ? d.close() : d.removeAttribute("open"));
+  const openHire = () => openDialog(hire);
+
+  $("#hire-close").addEventListener("click", () => closeDialog(hire));
   // a click on the dimmed area outside the box lands on the dialog itself
   hire.addEventListener("click", (e) => {
-    if (e.target === hire) closeHire();
+    if (e.target === hire) closeDialog(hire);
+  });
+
+  // ---------- play dialog ----------
+  // Items with a `url` ask before leaving the site; the rest say which ones have one.
+  const play = $("#play-dialog");
+  let playUrl = null;
+
+  function openPlay(id) {
+    const item = V.byId(id);
+    if (!item) return;
+    playUrl = item.url || null;
+    if (playUrl) {
+      const shown = playUrl.replace(/^https?:\/\/(www\.)?/, "");
+      $("#play-text").innerHTML = `Is it OK to redirect you to <b>${escapeHtml(shown)}</b>?`;
+      $("#play-actions").innerHTML =
+        `<button class="text-btn" data-dialog="close">Cancel</button>` +
+        `<button class="text-btn primary" data-dialog="go" autofocus>Continue</button>`;
+    } else {
+      $("#play-text").textContent = window.NO_URL_MESSAGE;
+      $("#play-actions").innerHTML = `<button class="text-btn primary" data-dialog="close" autofocus>OK</button>`;
+    }
+    openDialog(play);
+  }
+
+  play.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-dialog]");
+    if (e.target === play || (b && b.dataset.dialog === "close")) return closeDialog(play);
+    if (b && b.dataset.dialog === "go") {
+      closeDialog(play);
+      location.href = playUrl;
+    }
   });
 
   // ---------- theme ----------
@@ -728,7 +760,7 @@
     if (e.key === "Escape") {
       closePopup();
       closeDrawer();
-      if (hire.open) closeHire();
+      [hire, play].forEach((d) => d.open && closeDialog(d));
     }
     if (!typing && $("#reel-scroller") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
       e.preventDefault();
@@ -736,19 +768,7 @@
     }
   });
 
-  // ---------- logo ----------
-  // scaleX doesn't take up room, so a margin makes space for the extra width
-  function stretchLogo() {
-    const word = $("#masthead .logo-word");
-    const k = parseFloat(getComputedStyle(word).getPropertyValue("--logo-stretch")) || 1;
-    const extra = (k - 1) * word.offsetWidth + "px";
-    document.querySelectorAll(".logo-word").forEach((w) => (w.style.marginRight = extra));
-  }
-
   // ---------- start ----------
   renderGuide();
   render();
-  stretchLogo();
-  document.fonts && document.fonts.ready.then(stretchLogo);
-  window.addEventListener("resize", stretchLogo);
 })();
