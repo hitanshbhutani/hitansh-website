@@ -93,6 +93,10 @@ img { max-width: 100%; display: block; }
   -webkit-mask: url("../img/shorts-icon.webp") center / contain no-repeat;
   mask: url("../img/shorts-icon.webp") center / contain no-repeat;
 }
+.icon-shorts.hollow {
+  -webkit-mask-image: url("../img/shorts-icon-outline.png");
+  mask-image: url("../img/shorts-icon-outline.png");
+}
 
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 

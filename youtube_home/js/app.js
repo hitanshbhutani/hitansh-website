@@ -21,9 +21,13 @@
   const channelLabel = `View ${escapeHtml(C.shortName)}'s channel`;
 
   // ---------- side menu ----------
+  // these menu icons are drawn as outlines, and filled in while their page is open
+  const FILLED = { home: "homeFilled", saved: "savedFilled", shorts: "shorts" };
+  const menuIcon = (ic) => icon(ic, ic === "shorts" ? "hollow" : "");
+
   function renderGuide() {
     const item = (path, ic, label, key) =>
-      `<a class="guide-item" href="${path}" data-link data-key="${key}">${icon(ic)}<span>${label}</span></a>`;
+      `<a class="guide-item" href="${path}" data-link data-key="${key}" data-icon="${ic}">${menuIcon(ic)}<span>${label}</span></a>`;
 
     $("#guide").innerHTML = `
       <div class="drawer-head">
@@ -45,18 +49,21 @@
       </div>`;
 
     const mini = (path, ic, label, key) =>
-      `<a class="mini-item" href="${path}" data-link data-key="${key}">${icon(ic)}<span>${label}</span></a>`;
+      `<a class="mini-item" href="${path}" data-link data-key="${key}" data-icon="${ic}">${menuIcon(ic)}<span>${label}</span></a>`;
     $("#mini-guide").innerHTML =
       mini("./", "home", "Home", "home") +
       mini("work", "shorts", "Work", "work") +
-      mini("playlist?list=WL", "saved", "Saved", "later");
+      mini("playlist?list=WL", "saved", "Saved", "history later liked");
   }
 
+  // a menu entry can stand for several pages, e.g. Saved for History, Watch later and Liked
   function markGuide(key) {
     document.querySelectorAll("[data-key]").forEach((a) => {
-      const on = a.dataset.key === key;
+      const on = a.dataset.key.split(" ").includes(key);
+      const ic = a.dataset.icon;
       a.classList.toggle("active", on);
-      if (a.dataset.key === "home") a.querySelector("path").setAttribute("d", ICON_PATHS[on ? "homeFilled" : "home"]);
+      if (ic === "shorts") a.querySelector(".icon-shorts").classList.toggle("hollow", !on);
+      else if (FILLED[ic]) a.querySelector("path").setAttribute("d", ICON_PATHS[on ? FILLED[ic] : ic]);
     });
   }
 
