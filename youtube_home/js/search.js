@@ -126,19 +126,7 @@ const Search = (() => {
     return [...out].filter((s) => s !== typed).slice(0, limit);
   }
 
-  function readMinutes(item) {
-    const words = tokenize(item.text.join(" ")).length;
-    return Math.max(1, Math.round(words / 200));
-  }
-
-  // mm:ss at 200 words a minute, used for the duration badge
-  function duration(item) {
-    const words = tokenize(item.text.join(" ")).length;
-    const secs = Math.max(5, Math.round((words / 200) * 60));
-    return Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
-  }
-
-  return { run, snippet, suggest, highlight, tokenize, readMinutes, duration, invalidate: () => (vocab = null) };
+  return { run, snippet, suggest, highlight, tokenize, invalidate: () => (vocab = null) };
 })();
 
 function escapeHtml(s) {

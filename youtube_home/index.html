@@ -9,13 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <base href="/" />
   <script>
     // The site sits at the root on Vercel, but in a sub-folder on GitHub Pages,
     // where it is always opened at that folder's own address.
     (function () {
-      var base = document.createElement("base");
-      base.href = /\.github\.io$/.test(location.hostname) ? location.pathname.replace(/index\.html$/, "") : "/";
-      document.head.appendChild(base);
+      if (/\.github\.io$/.test(location.hostname)) {
+        document.querySelector("base").href = location.pathname.replace(/index\.html$/, "");
+      }
       try {
         var t = localStorage.getItem("theme");
         if (t === "dark" || t === "light") document.documentElement.dataset.theme = t;

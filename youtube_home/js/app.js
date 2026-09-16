@@ -95,7 +95,14 @@
   const redirect = new URLSearchParams(location.search).get("redirect");
   if (redirect) history.replaceState({}, "", redirect.replace(/^[/\\]+/, ""));
 
-  const RENAMED = { academic: "education" };
+  // older addresses that still open the right item
+  const RENAMED = { origin: "origins", academic: "edu", education: "edu" };
+
+  function itemFor(given, type, list) {
+    const id = RENAMED[given] || given || list[0].id;
+    const item = V.byId(id);
+    return item && item.type === type ? item : null;
+  }
 
   // how long a video takes to "start" after it's clicked or scrolled to
   const VST = 800;
@@ -154,18 +161,22 @@
       setSearchValue(sq);
       page.innerHTML = V.results(sq);
       title = sq + " - " + C.name;
-    } else if (path === "/watch" && V.byId(q.get("v"))) {
-      const item = V.byId(q.get("v"));
+    } else if ((path === "/watch" || /^\/beliefs(\/|$)/.test(path)) &&
+               itemFor(path === "/watch" ? q.get("v") : path.split("/")[2], "video", window.VIDEOS)) {
+      // /watch?v= links from before still open, under their /beliefs/ address
+      const item = itemFor(path === "/watch" ? q.get("v") : path.split("/")[2], "video", window.VIDEOS);
+      if (path !== "/beliefs/" + item.id) {
+        history.replaceState({}, "", "beliefs/" + item.id + (query ? "?q=" + encodeURIComponent(query) : ""));
+      }
       body.classList.add("no-guide");
       page.innerHTML = V.watch(item, query);
       Store.push("history", item.id);
       title = item.title + " - " + C.name;
       setupWatch(item, instant);
       if (!instant) navProgress();
-    } else if (/^\/(work|shorts)(\/|$)/.test(path) && (!path.split("/")[2] || V.byId(RENAMED[path.split("/")[2]] || path.split("/")[2]))) {
+    } else if (/^\/(work|shorts)(\/|$)/.test(path) && itemFor(path.split("/")[2], "short", window.SHORTS)) {
       // old /shorts/ and renamed links still open, under their current /work/ address
-      const given = path.split("/")[2];
-      const id = RENAMED[given] || given || window.SHORTS[0].id;
+      const id = itemFor(path.split("/")[2], "short", window.SHORTS).id;
       if (path !== "/work/" + id) history.replaceState({}, "", "work/" + id + location.search);
       const index = window.SHORTS.findIndex((s) => s.id === id);
       page.innerHTML = V.shorts(index, query);
@@ -206,7 +217,6 @@
     const toggle = $("#desc-toggle");
     const text = $("#desc-text");
     const scrub = $("#scrub");
-    const now = $("#time-now");
 
     const collapse = (on) => {
       desc.classList.toggle("clamped", on);
@@ -218,28 +228,24 @@
     });
     desc.addEventListener("click", () => desc.classList.contains("clamped") && collapse(false));
 
-    $("#player .thumb-img").addEventListener("click", () => openPlay(item.id));
-
     const all = [...window.VIDEOS, ...window.SHORTS];
     const next = all[(all.findIndex((x) => x.id === item.id) + 1) % all.length];
     $("#ctl-next").addEventListener("click", () => go(V.href(next)));
-    $("#ctl-full").addEventListener("click", () => {
-      const p = $("#player");
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (p.requestFullscreen) p.requestFullscreen();
-    });
+    // playing and full screen only exist for items that link somewhere
+    if (item.url) {
+      $("#player .thumb-img").addEventListener("click", () => openPlay(item.id));
+      $("#ctl-full").addEventListener("click", () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (player.requestFullscreen) player.requestFullscreen();
+      });
+    }
 
     // the red bar follows how far through the text you've scrolled
-    const [m, s] = Search.duration(item).split(":").map(Number);
-    const total = m * 60 + s;
     const onScroll = () => {
       if (!document.body.contains(text)) return window.removeEventListener("scroll", onScroll);
       const r = text.getBoundingClientRect();
       const seen = (window.innerHeight - r.top) / (r.height || 1);
-      const pct = Math.min(1, Math.max(0, seen));
-      scrub.style.width = pct * 100 + "%";
-      const t = Math.round(pct * total);
-      now.textContent = Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+      scrub.style.width = Math.min(1, Math.max(0, seen)) * 100 + "%";
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -272,8 +278,12 @@
       clearTimeout(reelTimer);
       items.forEach((el) => el.querySelector(".reel-video").classList.add("loading"));
       const video = items[i].querySelector(".reel-video");
-      if (skipDelay) video.classList.remove("loading");
-      else reelTimer = setTimeout(() => video.classList.remove("loading"), VST);
+      const start = () => {
+        video.classList.remove("loading");
+        if (!panelSideBySide()) feed.classList.add("panel-open");
+      };
+      if (skipDelay) start();
+      else reelTimer = setTimeout(start, VST);
 
       if (routePath() !== "/work/" + item.id) history.replaceState({}, "", "work/" + item.id);
       document.title = item.title + " - " + C.name;
@@ -330,16 +340,18 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
-  async function share(item) {
-    const url = new URL(V.href(item), document.baseURI).href;
-    if (navigator.share && matchMedia("(hover: none)").matches) {
-      try { await navigator.share({ title: item.title, url }); return; } catch (e) { return; }
-    }
+  // copies the address of the page that's open
+  async function share() {
+    const url = location.href;
     try {
       await navigator.clipboard.writeText(url);
       toast("Link copied to clipboard");
     } catch (e) {
-      toast(url);
+      if (navigator.share) {
+        try { await navigator.share({ title: document.title, url }); } catch (err) {}
+      } else {
+        toast(url);
+      }
     }
   }
 
@@ -393,7 +405,7 @@
         toast("Thanks for the feedback");
         break;
       case "share":
-        share(item);
+        share();
         break;
       case "save": {
         const on = Store.toggle("later", item.id);
@@ -457,7 +469,7 @@
       const on = Store.toggle("later", value);
       toast(on ? "Saved to Watch later" : "Removed from Watch later");
     } else if (kind === "share") {
-      share(V.byId(value));
+      share();
     } else if (kind === "theme") {
       setTheme(value);
     } else if (kind === "theme-open") {
@@ -532,24 +544,19 @@
   });
 
   // ---------- play dialog ----------
-  // Items with a `url` ask before leaving the site; the rest say which ones have one.
+  // Items with a `url` check before leaving the site.
   const play = $("#play-dialog");
   let playUrl = null;
 
   function openPlay(id) {
     const item = V.byId(id);
-    if (!item) return;
-    playUrl = item.url || null;
-    if (playUrl) {
-      const shown = playUrl.replace(/^https?:\/\/(www\.)?/, "");
-      $("#play-text").innerHTML = `Is it OK to redirect you to <b>${escapeHtml(shown)}</b>?`;
-      $("#play-actions").innerHTML =
-        `<button class="text-btn" data-dialog="close">Cancel</button>` +
-        `<button class="text-btn primary" data-dialog="go" autofocus>Continue</button>`;
-    } else {
-      $("#play-text").textContent = window.NO_URL_MESSAGE;
-      $("#play-actions").innerHTML = `<button class="text-btn primary" data-dialog="close" autofocus>OK</button>`;
-    }
+    if (!item || !item.url) return;
+    playUrl = item.url;
+    const shown = playUrl.replace(/^https?:\/\/(www\.)?/, "");
+    $("#play-text").innerHTML = `Redirecting to <b>${escapeHtml(shown)}</b>`;
+    $("#play-actions").innerHTML =
+      `<button class="text-btn" data-dialog="close">Cancel</button>` +
+      `<button class="text-btn primary" data-dialog="go" autofocus>Continue</button>`;
     openDialog(play);
   }
 

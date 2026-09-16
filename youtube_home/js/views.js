@@ -31,9 +31,9 @@ const V = (() => {
   const ch = () => window.CHANNEL;
   const byId = (id) => [...window.VIDEOS, ...window.SHORTS].find((x) => x.id === id);
   const href = (item, query) => {
-    const base = item.type === "short" ? "work/" + item.id : "watch?v=" + item.id;
+    const base = item.type === "short" ? "work/" + item.id : "beliefs/" + item.id;
     if (!query) return base;
-    return base + (item.type === "short" ? "?q=" : "&q=") + encodeURIComponent(query);
+    return base + "?q=" + encodeURIComponent(query);
   };
 
   function avatar(cls = "") {
@@ -82,11 +82,13 @@ const V = (() => {
   }
 
   const badge = (item) =>
-    `<span class="badge">${item.type === "short" ? "WORK" : Search.duration(item)}</span>`;
+    `<span class="badge">${item.type === "short" ? "WORK" : "BELIEF"}</span>`;
 
-  // sits on top of a thumbnail, outside its link, so pressing it doesn't open the page
-  const playBtn = (item, cls = "") =>
-    `<button class="play-btn ${cls}" data-play="${item.id}" aria-label="Play ${escapeHtml(item.title)}">${icon("play")}</button>`;
+  // only on items with a `url`: it asks before sending people there
+  const playBtn = (item) =>
+    item.url
+      ? `<button class="play-btn" data-play="${item.id}" aria-label="Play ${escapeHtml(item.title)}">${icon("play")}</button>`
+      : "";
 
   const menuBtn = (item) =>
     `<button class="icon-btn card-menu" data-menu="${item.id}" aria-label="Action menu">${icon("more")}</button>`;
@@ -99,7 +101,6 @@ const V = (() => {
           <a class="card-link" href="${href(item)}" data-link>
             <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
           </a>
-          ${playBtn(item)}
         </div>
         <div class="details">
           <a href="${ch().handle}" data-link aria-label="${escapeHtml(ch().name)}">${avatar()}</a>
@@ -120,7 +121,6 @@ const V = (() => {
           <a href="${href(item, query)}" data-link>
             <div class="short-thumb">${thumb(item, false)}</div>
           </a>
-          ${playBtn(item)}
         </div>
         <div class="short-meta">
           <a href="${href(item, query)}" data-link><h3 class="v-title">${escapeHtml(item.title)}</h3></a>
@@ -144,7 +144,6 @@ const V = (() => {
           <a href="${link}" data-link>
             <div class="thumb">${thumb(item, true)}${badge(item)}</div>
           </a>
-          ${playBtn(item)}
         </div>
         <div class="row-body">
           <a href="${link}" data-link><h3 class="row-title">${escapeHtml(item.title)}</h3></a>
@@ -164,7 +163,6 @@ const V = (() => {
           <a href="${href(item)}" data-link>
             <div class="thumb">${thumb(item, true)}${badge(item)}</div>
           </a>
-          ${playBtn(item, "small")}
         </div>
         <div class="compact-body">
           <a href="${href(item)}" data-link><h3 class="compact-title">${escapeHtml(item.title)}</h3></a>
@@ -230,22 +228,21 @@ const V = (() => {
     const others = [...window.VIDEOS, ...window.SHORTS].filter((x) => x.id !== item.id);
     const liked = Store.has("liked", item.id);
     const saved = Store.has("later", item.id);
-    const tags = item.tags.map((t) => "#" + t.replace(/-/g, "")).join(" ");
     return `
       <div class="watch">
         <div class="watch-main">
           <div class="player" id="player">
             ${thumb(item, true)}
             ${spinner}
-            ${playBtn(item, "big")}
+            ${playBtn(item)}
             <div class="player-bar">
               <div class="scrub"><i id="scrub" style="width:0%"></i></div>
               <div class="controls">
-                <button class="icon-btn" data-play="${item.id}" aria-label="Play">${icon("play")}</button>
+                ${item.url ? `<button class="icon-btn" data-play="${item.id}" aria-label="Play">${icon("play")}</button>` : ""}
                 <button class="icon-btn" id="ctl-next" aria-label="Next">${icon("next")}</button>
                 <button class="icon-btn" aria-label="Volume">${icon("volume")}</button>
-                <span class="time"><span id="time-now">0:00</span> / ${Search.duration(item)}</span>
-                <button class="icon-btn" id="ctl-full" aria-label="Full screen">${icon("fullscreen")}</button>
+                <span class="time">BELIEF</span>
+                ${item.url ? `<button class="icon-btn" id="ctl-full" aria-label="Full screen">${icon("fullscreen")}</button>` : ""}
               </div>
             </div>
           </div>
@@ -263,13 +260,13 @@ const V = (() => {
                 <button class="pill" data-action="like" data-id="${item.id}" aria-pressed="${liked}">${icon(liked ? "likeFilled" : "like")}${liked ? "Liked" : "Like"}</button>
                 <button class="pill" data-action="dislike" aria-label="Dislike">${icon("dislike")}</button>
               </div>
-              <button class="pill" data-action="share" data-id="${item.id}">${icon("share")}Share</button>
+              <button class="pill" data-action="share">${icon("share")}Share</button>
               <button class="pill" data-action="save" data-id="${item.id}">${icon(saved ? "check" : "later")}${saved ? "Saved" : "Save"}</button>
             </div>
           </div>
 
           <div class="desc" id="desc">
-            <div class="desc-top">${views(item)}&nbsp;&nbsp;${when(item)}<span class="desc-tags">${escapeHtml(tags)}</span></div>
+            <div class="desc-top">${views(item)}&nbsp;&nbsp;${when(item)}</div>
             <div class="desc-text" id="desc-text">${paragraphs(item, query)}</div>
             <button class="desc-toggle" id="desc-toggle">Show less</button>
           </div>
@@ -290,7 +287,7 @@ const V = (() => {
           <div class="reel-video loading">
             ${thumb(item, false)}
             ${spinner}
-            ${playBtn(item, "big")}
+            ${playBtn(item)}
             <div class="reel-overlay">
               <div class="owner-row">
                 <a href="${ch().handle}" data-link class="owner-link">${avatar()}<span>${escapeHtml(ch().name)}</span>${verified()}</a>
@@ -303,7 +300,7 @@ const V = (() => {
             <button data-action="like" data-id="${item.id}" class="${liked ? "on" : ""}" aria-pressed="${liked}"><span class="round">${icon(liked ? "likeFilled" : "like")}</span>Like</button>
             <button data-action="dislike"><span class="round">${icon("dislike")}</span>Dislike</button>
             <button data-action="panel" class="panel-btn"><span class="round">${icon("comment")}</span>About</button>
-            <button data-action="share" data-id="${item.id}"><span class="round">${icon("share")}</span>Share</button>
+            <button data-action="share"><span class="round">${icon("share")}</span>Share</button>
             <button data-menu="${item.id}"><span class="round">${icon("more")}</span></button>
           </div>
         </div>

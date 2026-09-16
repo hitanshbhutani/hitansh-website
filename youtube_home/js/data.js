@@ -39,7 +39,7 @@ window.VIDEOS = [
     ],
   },
   {
-    id: "origin",
+    id: "origins",
     type: "video",
     title: "Origins",
     views: "1",
@@ -55,11 +55,10 @@ window.VIDEOS = [
 
 window.SHORTS_SHELF_TITLE = "Work";
 
-// What the play button says on items that have no `url`.
-window.NO_URL_MESSAGE = "Only Parallaxis, Maya and Film have URLs.";
 
 // `fit: "contain"` shows the whole picture instead of cropping it to fill.
-// `url` is where the play button offers to take people; items without one say so.
+// `url` is where the play button offers to take people; items without one have no play button.
+// The `id` is the last part of the address: /work/<id> here, /beliefs/<id> above.
 window.SHORTS = [
   {
     id: "parallaxis",
@@ -92,7 +91,7 @@ window.SHORTS = [
     ],
   },
   {
-    id: "education",
+    id: "edu",
     type: "short",
     title: "Education",
     subtitle: "IIM Bangalore, IB Diploma",
