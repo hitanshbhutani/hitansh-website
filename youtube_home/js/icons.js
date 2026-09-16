@@ -37,8 +37,12 @@ const ICON_PATHS = {
 };
 
 function icon(name, cls = "") {
-  if (name === "shorts") {
-    return `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.2 3.7a4.3 4.3 0 00-5.9-1.6L5.6 5.4a4.3 4.3 0 00.2 7.5 4.3 4.3 0 001.1 7.4 4.3 4.3 0 003.7-.3l5.7-3.3a4.3 4.3 0 00-.2-7.5 4.3 4.3 0 001.1-5.5zM10 15V9l5 3-5 3z" fill="currentColor"/></svg>`;
-  }
+  // the Work (Shorts) shape comes from img/shorts-icon.webp, filled with the text colour
+  if (name === "shorts") return `<span class="icon icon-shorts ${cls}" aria-hidden="true"></span>`;
   return `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICON_PATHS[name]}" fill="currentColor"/></svg>`;
+}
+
+// the same logo in its own red, as on shelf headings
+function shortsLogo() {
+  return `<span class="shorts-logo" aria-hidden="true"><img src="img/shorts-icon.webp" alt=""></span>`;
 }

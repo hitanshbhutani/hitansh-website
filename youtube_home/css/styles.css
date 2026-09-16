@@ -88,6 +88,11 @@ button {
 img { max-width: 100%; display: block; }
 
 .icon { width: 24px; height: 24px; display: block; flex: none; }
+.icon-shorts {
+  background-color: currentColor;
+  -webkit-mask: url("../img/shorts-icon.webp") center / contain no-repeat;
+  mask: url("../img/shorts-icon.webp") center / contain no-repeat;
+}
 
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 

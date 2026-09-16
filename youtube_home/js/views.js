@@ -176,7 +176,7 @@ const V = (() => {
 
   const workShelf = (items, title, query, first = false) => `
     <section class="shelf ${first ? "first" : ""}">
-      <h2 class="shelf-head">${icon("shorts")}${escapeHtml(title)}</h2>
+      <h2 class="shelf-head">${shortsLogo()}${escapeHtml(title)}</h2>
       <div class="shorts-grid">${items.map((s) => shortCard(s, query)).join("")}</div>
     </section>`;
 
@@ -349,7 +349,7 @@ const V = (() => {
       body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">Worldview</h2>` : ""}<div class="video-grid">${window.VIDEOS.map((v) => videoCard(v)).join("")}</div></section>`;
     }
     if (tab !== "worldview") {
-      body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">${icon("shorts")}${escapeHtml(window.SHORTS_SHELF_TITLE)}</h2>` : ""}<div class="shorts-grid">${window.SHORTS.map((v) => shortCard(v)).join("")}</div></section>`;
+      body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">${shortsLogo()}${escapeHtml(window.SHORTS_SHELF_TITLE)}</h2>` : ""}<div class="shorts-grid">${window.SHORTS.map((v) => shortCard(v)).join("")}</div></section>`;
     }
     return `
       <div class="channel">

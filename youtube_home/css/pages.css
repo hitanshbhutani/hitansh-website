@@ -118,7 +118,10 @@
   line-height: 28px;
   font-weight: 700;
 }
-.shelf-head .icon { color: var(--red); }
+.shorts-logo { position: relative; width: 24px; height: 24px; flex: none; }
+/* white behind the see-through play triangle, so it stays white on the dark theme */
+.shorts-logo::before { content: ""; position: absolute; left: 38%; top: 33%; width: 28%; height: 34%; background: #fff; }
+.shorts-logo img { position: relative; width: 100%; height: 100%; }
 
 .shorts-grid {
   display: grid;
