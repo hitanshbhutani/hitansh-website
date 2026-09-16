@@ -123,7 +123,7 @@ window.SHORTS = [
     tags: ["education", "debate"],
     text: [
       "IIM Bangalore Bachelors in Business Administration\n(Digital Business and Entrepreneurship) - Entrance Examination AIR 36 of 6000+.\n[Distance Learning with In-Person Exams, Graduating 2029]",
-      "IBDP 33 (Physics, Math AA, Chemistry HL)",
+      "IB Diploma - 33 Points (Physics HL, Math AA HL, Chemistry)",
       "CBSE 10th 94.2%",
       "SAT 1540",
       "National Debate Champion [Individual] '23 (Indian Schools Debating Society Circuit)",

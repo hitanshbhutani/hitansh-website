@@ -259,21 +259,20 @@
     if (firstMark) setTimeout(() => firstMark.scrollIntoView({ block: "center", behavior: "smooth" }), 150);
   }
 
-  // the description sits beside each item on wide screens, and slides over it on small ones
+  // The description sits beside each item on wide screens and slides over it on small ones.
+  // Closing it only lasts until the next item: every item opens it again once it has loaded.
   const panelSideBySide = () => window.innerWidth > 1100;
 
   function togglePanel() {
     const feed = $(".shorts-page");
-    if (!feed) return;
-    const open = feed.classList.toggle("panel-open");
-    if (panelSideBySide()) Store.set("panelHidden", !open);
+    if (feed) feed.classList.toggle("panel-open");
   }
 
   function setupReels(startIndex, instant) {
     const feed = $(".shorts-page");
     const scroller = $("#reel-scroller");
     const items = [...scroller.querySelectorAll(".reel-item")];
-    feed.classList.toggle("panel-open", panelSideBySide() && !Store.get("panelHidden", false));
+    feed.classList.toggle("panel-open", panelSideBySide());
     scroller.scrollTop = items[startIndex].offsetTop;
 
     let active = -1;
@@ -287,7 +286,7 @@
       video.classList.add("loading");
       const start = () => {
         video.classList.remove("loading");
-        if (!panelSideBySide()) feed.classList.add("panel-open");
+        feed.classList.add("panel-open");
       };
       if (skipDelay) start();
       else reelTimer = setTimeout(start, VST);
