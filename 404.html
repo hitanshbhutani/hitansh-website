@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page not found</title>
+  <script>
+    // GitHub Pages can't route addresses like /youtube_home/watch?v=mission,
+    // so hand them to the video site, which puts the address back.
+    (function () {
+      var m = location.pathname.match(/^(.*?\/youtube_home\/)(.+)$/);
+      if (m) location.replace(m[1] + "?redirect=" + encodeURIComponent(m[2] + location.search));
+    })();
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0 16px;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #fbf7f0;
+      color: #3d3a36;
+      font: 16px/1.5 "IBM Plex Mono", ui-monospace, monospace;
+    }
+    a { color: #9c554f; }
+  </style>
+</head>
+<body>
+  <p>Nothing here. <a id="home" href="./">back to the start</a></p>
+  <script>
+    document.getElementById("home").href = "/" + location.pathname.split("/")[1] + "/";
+  </script>
+</body>
+</html>
