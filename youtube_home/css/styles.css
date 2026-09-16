@@ -112,6 +112,27 @@ img { max-width: 100%; display: block; }
 .icon-btn:hover { background: var(--tint); }
 .icon-btn:active { background: var(--tint-hover); }
 
+/* ---------- page loading bar ---------- */
+#nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 100;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+}
+#nav-progress.run { opacity: 1; animation: nav-progress 0.8s cubic-bezier(0.2, 0.6, 0.3, 1) forwards; }
+#nav-progress.done { transform: scaleX(1); opacity: 0; transition: opacity 0.3s; }
+@keyframes nav-progress {
+  from { transform: scaleX(0.05); }
+  to { transform: scaleX(1); }
+}
+
 /* ---------- masthead ---------- */
 #masthead {
   position: fixed;
@@ -134,13 +155,18 @@ img { max-width: 100%; display: block; }
   position: relative;
 }
 .logo-mark svg { width: 29px; height: 20px; display: block; }
+/* League Gothic Condensed is much narrower than the usual wordmark, so it is
+   widened by --logo-stretch; app.js adds the matching space after it */
 .logo-word {
+  --logo-stretch: 1.65;
+  display: inline-block;
   font-family: "Districtansh Logo", "League Gothic", "Arial Narrow", sans-serif;
   font-weight: 400;
-  font-size: 29px;
+  font-size: 25px;
   line-height: 20px;
-  letter-spacing: 0.2px;
   margin-left: 4px;
+  transform: scaleX(var(--logo-stretch));
+  transform-origin: left center;
 }
 .logo-cc {
   font-size: 10px;
@@ -565,6 +591,12 @@ body.drawer-open .drawer-head { display: flex; }
 @media (max-width: 400px) {
   .logo-cc { display: none; }
   #bell-btn { display: none; }
+  .logo { padding: 18px 6px 18px 10px; }
+  .logo-word { font-size: 22px; }
+}
+
+@media (max-width: 350px) {
+  #create-btn { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

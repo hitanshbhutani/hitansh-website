@@ -33,10 +33,9 @@
       <div class="guide-section">
         ${item("./", "home", "Home", "home")}
         ${item("work", "shorts", "Work", "work")}
-        ${item("feed/subscriptions", "subs", "Subscriptions", "subscriptions")}
       </div>
       <div class="guide-section">
-        <a class="guide-title" href="${C.handle}" data-link>You ${icon("chevron")}</a>
+        <a class="guide-title" href="${C.handle}" data-link>Channel ${icon("chevron")}</a>
         ${item(C.handle, "you", `${escapeHtml(C.shortName)}'s channel`, "channel")}
         ${item("feed/history", "history", "History", "history")}
         ${item("playlist?list=WL", "later", "Watch later", "later")}
@@ -51,8 +50,7 @@
     $("#mini-guide").innerHTML =
       mini("./", "home", "Home", "home") +
       mini("work", "shorts", "Work", "work") +
-      mini("feed/subscriptions", "subs", "Subscriptions", "subscriptions") +
-      mini(C.handle, "you", "You", "channel");
+      mini(C.handle, "you", "Channel", "channel");
   }
 
   function markGuide(key) {
@@ -97,6 +95,23 @@
   const redirect = new URLSearchParams(location.search).get("redirect");
   if (redirect) history.replaceState({}, "", redirect.replace(/^[/\\]+/, ""));
 
+  // how long a video takes to "start" after it's clicked or scrolled to
+  const VST = 800;
+  let playerTimer = 0;
+  let reelTimer = 0;
+  let reelObserver = null;
+
+  // the thin red bar across the top while a video page loads
+  let progressTimer = 0;
+  function navProgress() {
+    const bar = $("#nav-progress");
+    clearTimeout(progressTimer);
+    bar.classList.remove("run", "done");
+    void bar.offsetWidth;
+    bar.classList.add("run");
+    progressTimer = setTimeout(() => bar.classList.replace("run", "done"), VST);
+  }
+
   function go(url, replace = false) {
     closeDrawer();
     closePopup();
@@ -112,9 +127,15 @@
     go(a.getAttribute("href"));
   });
 
-  window.addEventListener("popstate", render);
+  window.addEventListener("popstate", () => render());
 
-  function render() {
+  // `instant` skips the loading delay, for redraws that aren't a new video
+  function render({ instant = false } = {}) {
+    clearTimeout(playerTimer);
+    clearTimeout(reelTimer);
+    if (reelObserver) reelObserver.disconnect();
+    reelObserver = null;
+
     const path = routePath();
     const q = new URLSearchParams(location.search);
     const query = q.get("q") || "";
@@ -122,10 +143,10 @@
     let title = C.name;
     body.classList.remove("no-guide", "search-mode");
 
-    if (path === "/" || path === "/index.html" || path === "/feed/subscriptions") {
+    if (path === "/" || path === "/index.html") {
       const tag = q.get("tag") || null;
       page.innerHTML = V.home(tag);
-      key = path === "/feed/subscriptions" ? "subscriptions" : "home";
+      key = "home";
     } else if (path === "/results") {
       const sq = q.get("search_query") || "";
       setSearchValue(sq);
@@ -137,19 +158,18 @@
       page.innerHTML = V.watch(item, query);
       Store.push("history", item.id);
       title = item.title + " - " + C.name;
-      setupWatch(item);
+      setupWatch(item, instant);
+      if (!instant) navProgress();
     } else if (/^\/(work|shorts)(\/|$)/.test(path) && (!path.split("/")[2] || V.byId(path.split("/")[2]))) {
       // old /shorts/ links still open, under their /work/ address
       const id = path.split("/")[2] || window.SHORTS[0].id;
       if (path !== "/work/" + id) history.replaceState({}, "", "work/" + id + location.search);
       const index = window.SHORTS.findIndex((s) => s.id === id);
-      const item = window.SHORTS[index];
-      page.innerHTML = V.shorts(item, index, query);
-      Store.push("history", item.id);
+      page.innerHTML = V.shorts(index, query);
       key = "work";
-      title = item.title + " - " + C.name;
-      const panelHidden = Store.get("panelHidden", false) && window.innerWidth > 640;
-      if (panelHidden) togglePanel(false);
+      title = window.SHORTS[index].title + " - " + C.name;
+      setupReels(index, instant);
+      if (!instant) navProgress();
     } else if (path.startsWith("/" + C.handle)) {
       const tab = path.split("/")[2] || "home";
       page.innerHTML = V.channel(["beliefs", "work"].includes(tab) ? tab : "home");
@@ -173,7 +193,12 @@
   }
 
   // ---------- watch page ----------
-  function setupWatch(item) {
+  function setupWatch(item, instant) {
+    const player = $("#player");
+    if (!instant) {
+      player.classList.add("loading");
+      playerTimer = setTimeout(() => player.classList.remove("loading"), VST);
+    }
     const desc = $("#desc");
     const toggle = $("#desc-toggle");
     const text = $("#desc-text");
@@ -226,13 +251,77 @@
     if (firstMark) setTimeout(() => firstMark.scrollIntoView({ block: "center", behavior: "smooth" }), 150);
   }
 
-  function togglePanel(force) {
-    const panel = $("#reel-panel");
-    if (!panel) return;
-    const show = force === undefined ? panel.hidden : force;
-    panel.hidden = !show;
-    $("#panel-btn").classList.toggle("on", show);
-    Store.set("panelHidden", !show);
+  // the description sits beside each item on wide screens, and slides over it on small ones
+  const panelSideBySide = () => window.innerWidth > 1100;
+
+  function togglePanel() {
+    const feed = $(".shorts-page");
+    if (!feed) return;
+    const open = feed.classList.toggle("panel-open");
+    if (panelSideBySide()) Store.set("panelHidden", !open);
+  }
+
+  function setupReels(startIndex, instant) {
+    const feed = $(".shorts-page");
+    const scroller = $("#reel-scroller");
+    const items = [...scroller.querySelectorAll(".reel-item")];
+    feed.classList.toggle("panel-open", panelSideBySide() && !Store.get("panelHidden", false));
+    scroller.scrollTop = items[startIndex].offsetTop;
+
+    let active = -1;
+    const activate = (i, skipDelay) => {
+      if (i === active) return;
+      active = i;
+      const item = window.SHORTS[i];
+      clearTimeout(reelTimer);
+      items.forEach((el) => el.querySelector(".reel-video").classList.add("loading"));
+      const video = items[i].querySelector(".reel-video");
+      if (skipDelay) video.classList.remove("loading");
+      else reelTimer = setTimeout(() => video.classList.remove("loading"), VST);
+
+      if (routePath() !== "/work/" + item.id) history.replaceState({}, "", "work/" + item.id);
+      document.title = item.title + " - " + C.name;
+      Store.push("history", item.id);
+      feed.querySelector('[data-reel="-1"]').disabled = i === 0;
+      feed.querySelector('[data-reel="1"]').disabled = i === items.length - 1;
+    };
+
+    // One wheel notch or one trackpad swipe moves exactly one item. A trackpad keeps
+    // sending wheel events after the fingers lift, so that tail counts as the same swipe.
+    // Touch screens are left to the browser's own snap scrolling.
+    let wheelSum = 0;
+    let lastWheel = 0;
+    let lockUntil = 0;
+    scroller.addEventListener("wheel", (e) => {
+      if (e.ctrlKey || e.target.closest(".reel-panel") || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      const now = performance.now();
+      const gap = now - lastWheel;
+      lastWheel = now;
+      if (now < lockUntil) {
+        if (gap < 120) lockUntil = Math.max(lockUntil, now + 120);
+        return;
+      }
+      if (gap > 300) wheelSum = 0;
+      wheelSum += e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY;
+      if (Math.abs(wheelSum) >= 30) {
+        scrollReel(Math.sign(wheelSum));
+        wheelSum = 0;
+        lockUntil = now + 500;
+      }
+    }, { passive: false });
+
+    activate(startIndex, instant);
+    reelObserver = new IntersectionObserver(
+      (entries) => entries.forEach((en) => en.isIntersecting && activate(+en.target.dataset.index)),
+      { root: scroller, threshold: 0.6 }
+    );
+    items.forEach((el) => reelObserver.observe(el));
+  }
+
+  function scrollReel(dir) {
+    const scroller = $("#reel-scroller");
+    if (scroller) scroller.scrollBy({ top: dir * scroller.clientHeight, behavior: "smooth" });
   }
 
   // ---------- actions ----------
@@ -258,13 +347,15 @@
     }
   }
 
-  const rerender = () => {
-    const y = window.scrollY;
-    const panelWasHidden = $("#reel-panel") && $("#reel-panel").hidden;
-    render();
-    window.scrollTo(0, y);
-    if (panelWasHidden) togglePanel(false);
-  };
+  function showLiked(btn, on) {
+    btn.setAttribute("aria-pressed", on);
+    if (btn.closest(".reel-actions")) {
+      btn.classList.toggle("on", on);
+      btn.querySelector(".round").innerHTML = icon(on ? "likeFilled" : "like");
+    } else {
+      btn.innerHTML = icon(on ? "likeFilled" : "like") + (on ? "Liked" : "Like");
+    }
+  }
 
   document.addEventListener("click", (e) => {
     const chip = e.target.closest("[data-chip]");
@@ -277,7 +368,7 @@
     if (tab) return go(C.handle + (tab.dataset.tab === "home" ? "" : "/" + tab.dataset.tab));
 
     const reel = e.target.closest("[data-reel]");
-    if (reel && !reel.disabled) return go("work/" + window.SHORTS[+reel.dataset.reel].id);
+    if (reel) return reel.disabled || scrollReel(+reel.dataset.reel);
 
     const menu = e.target.closest("[data-menu]");
     if (menu) {
@@ -296,7 +387,7 @@
       case "like": {
         const on = Store.toggle("liked", item.id);
         toast(on ? "Added to Liked videos" : "Removed from Liked videos");
-        rerender();
+        showLiked(btn, on);
         break;
       }
       case "dislike":
@@ -308,7 +399,7 @@
       case "save": {
         const on = Store.toggle("later", item.id);
         toast(on ? "Saved to Watch later" : "Removed from Watch later");
-        rerender();
+        btn.innerHTML = icon(on ? "check" : "later") + (on ? "Saved" : "Save");
         break;
       }
       case "panel":
@@ -317,7 +408,7 @@
       case "clear-history":
         Store.set("history", []);
         toast("Watch history cleared");
-        rerender();
+        render({ instant: true });
         break;
       case "close-drawer":
         closeDrawer();
@@ -639,16 +730,25 @@
       closeDrawer();
       if (hire.open) closeHire();
     }
-    if (!typing && routePath().startsWith("/work/") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-      const btn = document.querySelector(`.reel-nav [data-dir="${e.key === "ArrowDown" ? "next" : "prev"}"]`);
-      if (btn && !btn.disabled) {
-        e.preventDefault();
-        btn.click();
-      }
+    if (!typing && $("#reel-scroller") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      scrollReel(e.key === "ArrowDown" ? 1 : -1);
     }
   });
+
+  // ---------- logo ----------
+  // scaleX doesn't take up room, so a margin makes space for the extra width
+  function stretchLogo() {
+    const word = $("#masthead .logo-word");
+    const k = parseFloat(getComputedStyle(word).getPropertyValue("--logo-stretch")) || 1;
+    const extra = (k - 1) * word.offsetWidth + "px";
+    document.querySelectorAll(".logo-word").forEach((w) => (w.style.marginRight = extra));
+  }
 
   // ---------- start ----------
   renderGuide();
   render();
+  stretchLogo();
+  document.fonts && document.fonts.ready.then(stretchLogo);
+  window.addEventListener("resize", stretchLogo);
 })();

@@ -54,15 +54,20 @@ const V = (() => {
   function ago(dateStr) {
     const then = new Date(dateStr + "T00:00:00");
     const secs = Math.max(0, (Date.now() - then.getTime()) / 1000);
-    const units = [["Year", 31536000], ["Month", 2592000], ["Week", 604800], ["Day", 86400], ["Hour", 3600]];
+    const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600]];
     for (const [name, s] of units) {
       const n = Math.floor(secs / s);
-      if (n >= 1) return `${n} ${name}${n > 1 ? "s" : ""} Ago`;
+      if (n >= 1) return `${n} ${name}${n > 1 ? "s" : ""} ago`;
     }
-    return "Just Now";
+    return "just now";
   }
 
-  const when = (item) => escapeHtml(item.uploaded || ago(item.published));
+  const when = (item) => escapeHtml((item.uploaded || ago(item.published)).toLowerCase());
+  const views = (item) => escapeHtml(`${item.views} ${item.views === "1" ? "view" : "views"}`);
+  const metaLine = (item) => `${views(item)}<span class="dot"></span>${when(item)}`;
+
+  // the loading circle shown until a video "starts"
+  const spinner = `<div class="spinner" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26"/></svg></div>`;
 
   // ---- thumbnails ----
   // `wide` is a 16:9 frame. A vertical picture in one gets blurred side bars,
@@ -94,7 +99,7 @@ const V = (() => {
           <div>
             <a href="${href(item)}" data-link><h3 class="v-title">${escapeHtml(item.title)}</h3></a>
             <div class="v-meta"><a href="${ch().handle}" data-link>${channelName()}</a></div>
-            <div class="v-meta">${when(item)}</div>
+            <div class="v-meta">${metaLine(item)}</div>
           </div>
           ${menuBtn(item)}
         </div>
@@ -109,7 +114,7 @@ const V = (() => {
         </a>
         <div class="short-meta">
           <a href="${href(item, query)}" data-link><h3 class="v-title">${escapeHtml(item.title)}</h3></a>
-          <div class="v-meta">${when(item)}</div>
+          <div class="v-meta">${metaLine(item)}</div>
           ${menuBtn(item)}
         </div>
       </div>`;
@@ -130,7 +135,7 @@ const V = (() => {
         </a>
         <div class="row-body">
           <a href="${link}" data-link><h3 class="row-title">${escapeHtml(item.title)}</h3></a>
-          <div class="v-meta" style="font-size:12px;line-height:18px">${when(item)}</div>
+          <div class="v-meta" style="font-size:12px;line-height:18px">${metaLine(item)}</div>
           <a class="row-channel" href="${ch().handle}" data-link>${avatar()}${channelName()}</a>
           <p class="row-snippet">${snippet}</p>
           ${isShort && item.subtitle ? `<span class="row-tag">${escapeHtml(item.subtitle)}</span>` : ""}
@@ -148,7 +153,7 @@ const V = (() => {
         <div class="compact-body">
           <a href="${href(item)}" data-link><h3 class="compact-title">${escapeHtml(item.title)}</h3></a>
           <div class="v-meta">${channelName()}</div>
-          <div class="v-meta">${when(item)}</div>
+          <div class="v-meta">${metaLine(item)}</div>
           ${menuBtn(item)}
         </div>
       </div>`;
@@ -215,6 +220,7 @@ const V = (() => {
         <div class="watch-main">
           <div class="player" id="player">
             ${thumb(item, true)}
+            ${spinner}
             <button class="player-play" id="player-play" aria-label="Read">${icon("play")}</button>
             <div class="player-bar">
               <div class="scrub"><i id="scrub" style="width:0%"></i></div>
@@ -247,7 +253,7 @@ const V = (() => {
           </div>
 
           <div class="desc" id="desc">
-            <div class="desc-top">${when(item)}<span class="desc-tags">${escapeHtml(tags)}</span></div>
+            <div class="desc-top">${views(item)}&nbsp;&nbsp;${when(item)}<span class="desc-tags">${escapeHtml(tags)}</span></div>
             <div class="desc-text" id="desc-text">${paragraphs(item, query)}</div>
             <button class="desc-toggle" id="desc-toggle">Show less</button>
           </div>
@@ -260,46 +266,56 @@ const V = (() => {
       </div>`;
   }
 
-  function shorts(item, index, query) {
+  function reelItem(item, index, query) {
     const liked = Store.has("liked", item.id);
-    const total = window.SHORTS.length;
     return `
-      <div class="shorts-page">
+      <section class="reel-item" data-index="${index}">
         <div class="reel">
-          <div class="reel-video">
+          <div class="reel-video loading">
             ${thumb(item, false)}
+            ${spinner}
             <div class="reel-overlay">
               <div class="owner-row">
                 <a href="${ch().handle}" data-link class="owner-link">${avatar()}<span>${escapeHtml(ch().handle)}</span>${verified()}</a>
                 <button class="sub-btn" data-action="hire">Hire</button>
               </div>
-              <h1>${escapeHtml(item.title)}</h1>
+              <h2 class="reel-title">${escapeHtml(item.title)}</h2>
             </div>
           </div>
           <div class="reel-actions">
             <button data-action="like" data-id="${item.id}" class="${liked ? "on" : ""}" aria-pressed="${liked}"><span class="round">${icon(liked ? "likeFilled" : "like")}</span>Like</button>
             <button data-action="dislike"><span class="round">${icon("dislike")}</span>Dislike</button>
-            <button data-action="panel" class="on" id="panel-btn"><span class="round">${icon("comment")}</span>About</button>
+            <button data-action="panel" class="panel-btn"><span class="round">${icon("comment")}</span>About</button>
             <button data-action="share" data-id="${item.id}"><span class="round">${icon("share")}</span>Share</button>
             <button data-menu="${item.id}"><span class="round">${icon("more")}</span></button>
           </div>
         </div>
 
-        <section class="reel-panel" id="reel-panel">
+        <section class="reel-panel">
           <div class="panel-head">Description<button class="icon-btn" data-action="panel" aria-label="Close">${icon("close")}</button></div>
           <div class="panel-body">
-            <h2>${escapeHtml(item.title)}</h2>
+            <h3>${escapeHtml(item.title)}</h3>
+            ${item.subtitle ? `<p class="panel-sub">${escapeHtml(item.subtitle)}</p>` : ""}
             <div class="panel-stats">
+              <div><strong>${escapeHtml(item.views)}</strong><span>${item.views === "1" ? "View" : "Views"}</span></div>
               <div><strong>${when(item)}</strong><span>Uploaded</span></div>
-              ${item.subtitle ? `<div><strong>${escapeHtml(item.subtitle)}</strong><span>Details</span></div>` : ""}
             </div>
             ${paragraphs(item, query)}
           </div>
         </section>
+      </section>`;
+  }
 
+  // `query` highlights search words in the item the search opened
+  function shorts(index, query) {
+    return `
+      <div class="shorts-page">
+        <div class="reel-scroller" id="reel-scroller">
+          ${window.SHORTS.map((s, i) => reelItem(s, i, i === index ? query : "")).join("")}
+        </div>
         <div class="reel-nav">
-          <button class="icon-btn" data-reel="${index - 1}" data-dir="prev" ${index === 0 ? "disabled" : ""} aria-label="Previous">${icon("up")}</button>
-          <button class="icon-btn" data-reel="${index + 1}" data-dir="next" ${index === total - 1 ? "disabled" : ""} aria-label="Next">${icon("down")}</button>
+          <button class="icon-btn" data-reel="-1" aria-label="Previous">${icon("up")}</button>
+          <button class="icon-btn" data-reel="1" aria-label="Next">${icon("down")}</button>
         </div>
       </div>`;
   }

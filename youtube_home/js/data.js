@@ -10,7 +10,7 @@ window.CHANNEL = {
   initials: "HB",
   avatar: "img/channel-avatar.jpg",
   banner: "img/banner.jpg",
-  tagline: "Screenwriter, director, editor and video essayist.",
+  tagline: "Media for the Future",
   email: "hitansh.bhutani@gmail.com",
   phone: "+91-9810504325",
 };
@@ -22,13 +22,15 @@ window.VIEWER = {
   avatar: "img/viewer-avatar.jpg",
 };
 
-// `uploaded` is shown as written. Leave it null to work it out from `published`.
+// `views` is shown as written, followed by "views". `uploaded` is shown in lower case;
+// leave it null to work it out from `published`.
 window.VIDEOS = [
   {
     id: "mission",
     type: "video",
     title: "Mission",
-    uploaded: "Tomorrow",
+    views: "8.3B",
+    uploaded: "tomorrow",
     thumbnail: "img/mission.jpg",
     tags: ["film", "writing", "directing", "video-essays"],
     text: [
@@ -39,12 +41,13 @@ window.VIDEOS = [
   {
     id: "origin",
     type: "video",
-    title: "Origin",
-    uploaded: "19 Years Ago",
+    title: "Origins",
+    views: "1",
+    uploaded: "19 years ago",
     thumbnail: "img/origin.jpg",
     tags: ["film", "writing", "debate"],
     text: [
-      "PLACEHOLDER - paste the Origin text here.",
+      "PLACEHOLDER - paste the Origins text here.",
       "Before any filmmaking I did competitive debate and Model UN for years: national debate champion in 2021, Team India, 32 conferences and 13 best delegate awards.",
     ],
   },
@@ -59,6 +62,7 @@ window.SHORTS = [
     type: "short",
     title: "Parallaxis",
     subtitle: "Jun 2026 - now",
+    views: "TBA",
     uploaded: null,
     published: "2026-06-01",
     thumbnail: "img/parallaxis.jpg",
@@ -73,7 +77,8 @@ window.SHORTS = [
     type: "short",
     title: "Maya Narrative Universe",
     subtitle: "Department of Lore, Goa",
-    uploaded: "1 Year Ago",
+    views: "127K",
+    uploaded: "1 year ago",
     thumbnail: "img/maya.jpg",
     tags: ["world-building", "writing", "directing"],
     text: [
@@ -86,7 +91,8 @@ window.SHORTS = [
     type: "short",
     title: "Academic",
     subtitle: "IIM Bangalore, IB Diploma",
-    uploaded: "2 Years Later",
+    views: "148 crore",
+    uploaded: "2 years later",
     thumbnail: "img/academic.jpg",
     tags: ["education", "debate"],
     text: [
@@ -99,9 +105,9 @@ window.SHORTS = [
     type: "short",
     title: "Film",
     subtitle: "Chennai",
-    uploaded: "2 to 4 Years Ago",
-    thumbnail: "img/film.webp",
-    fit: "contain",
+    views: "1K",
+    uploaded: "2 to 4 years ago",
+    thumbnail: "img/film.jpg",
     tags: ["film", "directing", "writing", "editing"],
     text: [
       "PLACEHOLDER - paste the Film text here.",

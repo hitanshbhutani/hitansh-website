@@ -12,7 +12,8 @@ Everything that is text lives in `js/data.js`:
 - `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Academic, Film
 - `text` on each one is what shows when it's opened, one string per paragraph
 - `tags` decide which chip (Film, Writing...) each one shows up under
-- `thumbnail` is the picture in `img/`, and `uploaded` is the date text shown under it
+- `thumbnail` is the picture in `img/`, `views` is the view count, and `uploaded` is the
+  date text shown after it (always in lower case)
 
 Search reads straight from `text` and titles, so there's nothing else to update.
 
@@ -33,7 +34,8 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 
 - `/` home, `/?tag=film` filtered by a chip
 - `/watch?v=mission`, `/watch?v=origin`
-- `/work/parallaxis`, `/work/maya`, `/work/academic`, `/work/film`
+- `/work/parallaxis`, `/work/maya`, `/work/academic`, `/work/film` - one feed that scrolls
+  item by item with the wheel, a trackpad or a swipe
 - `/results?search_query=...`
 - `/@hitanshbhutani` channel page, with `/beliefs` and `/work` tabs
 - `/feed/history`, `/playlist?list=WL` (watch later), `/playlist?list=LL` (liked)
