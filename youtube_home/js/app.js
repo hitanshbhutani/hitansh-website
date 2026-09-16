@@ -232,7 +232,6 @@
     const desc = $("#desc");
     const toggle = $("#desc-toggle");
     const text = $("#desc-text");
-    const scrub = $("#scrub");
 
     const collapse = (on) => {
       desc.classList.toggle("clamped", on);
@@ -255,15 +254,6 @@
         else if (player.requestFullscreen) player.requestFullscreen();
       });
     }
-
-    // the red bar follows how far through the text you've scrolled
-    const onScroll = () => {
-      if (!document.body.contains(text)) return window.removeEventListener("scroll", onScroll);
-      const r = text.getBoundingClientRect();
-      const seen = (window.innerHeight - r.top) / (r.height || 1);
-      scrub.style.width = Math.min(1, Math.max(0, seen)) * 100 + "%";
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
 
     const firstMark = text.querySelector("mark");
     if (firstMark) setTimeout(() => firstMark.scrollIntoView({ block: "center", behavior: "smooth" }), 150);

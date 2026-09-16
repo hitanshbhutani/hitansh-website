@@ -9,7 +9,7 @@ const Search = (() => {
   const tokenize = (s) => norm(s).match(/[a-z0-9]+/g) || [];
 
   function fullText(item) {
-    return [item.title, item.subtitle || "", ...item.text].join(" ");
+    return [item.title, ...item.text].join(" ");
   }
 
   // word -> how many times it appears, for ranking suggestions

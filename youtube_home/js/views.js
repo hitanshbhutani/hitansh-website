@@ -131,19 +131,20 @@ const V = (() => {
       </div>`;
   }
 
+  // the line along the bottom of a Worldview thumbnail: red once opened, grey before
   function watchedBar(item) {
-    return Store.has("history", item.id) ? `<span class="progress"><i style="width:100%"></i></span>` : "";
+    if (item.type !== "video") return "";
+    return `<span class="progress ${Store.has("history", item.id) ? "seen" : ""}"></span>`;
   }
 
   function row(item, query) {
     const link = href(item, query);
-    const isShort = item.type === "short";
     const snippet = query ? Search.snippet(item, query) : escapeHtml(item.text.join(" ").slice(0, 160)) + "...";
     return `
       <div class="row">
         <div class="thumb-wrap">
           <a href="${link}" data-link>
-            <div class="thumb">${thumb(item, true)}${badge(item)}</div>
+            <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
           </a>
         </div>
         <div class="row-body">
@@ -151,7 +152,6 @@ const V = (() => {
           <div class="v-meta" style="font-size:12px;line-height:18px">${metaLine(item)}</div>
           <a class="row-channel" href="${ch().handle}" data-link>${avatar()}${channelName()}</a>
           <p class="row-snippet">${snippet}</p>
-          ${isShort && item.subtitle ? `<span class="row-tag">${escapeHtml(item.subtitle)}</span>` : ""}
           ${menuBtn(item)}
         </div>
       </div>`;
@@ -162,7 +162,7 @@ const V = (() => {
       <div class="compact">
         <div class="thumb-wrap">
           <a href="${href(item)}" data-link>
-            <div class="thumb">${thumb(item, true)}${badge(item)}</div>
+            <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
           </a>
         </div>
         <div class="compact-body">
@@ -237,7 +237,7 @@ const V = (() => {
             ${spinner}
             ${playBtn(item)}
             <div class="player-bar">
-              <div class="scrub"><i id="scrub" style="width:0%"></i></div>
+              <div class="scrub ${Store.has("history", item.id) ? "seen" : ""}"></div>
               <div class="controls">
                 ${item.url ? `<button class="icon-btn" data-play="${item.id}" aria-label="Play">${icon("play")}</button>` : ""}
                 <button class="icon-btn" id="ctl-next" aria-label="Next">${icon("next")}</button>
@@ -310,7 +310,6 @@ const V = (() => {
           <div class="panel-head">Description<button class="icon-btn" data-action="panel" aria-label="Close">${icon("close")}</button></div>
           <div class="panel-body">
             <h3>${escapeHtml(item.title)}</h3>
-            ${item.subtitle ? `<p class="panel-sub">${escapeHtml(item.subtitle)}</p>` : ""}
             <div class="panel-stats">
               <div><strong>${escapeHtml(item.views)}</strong><span>${escapeHtml(viewsWord(item).replace(/^./, (c) => c.toUpperCase()))}</span></div>
               <div><strong>${when(item)}</strong><span>Uploaded</span></div>
