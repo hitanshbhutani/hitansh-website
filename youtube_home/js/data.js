@@ -22,7 +22,8 @@ window.VIEWER = {
   avatar: "img/viewer-avatar.jpg",
 };
 
-// `views` is shown as written, followed by "views". `uploaded` is shown in lower case;
+// `views` is shown as written, followed by "views" (or by `viewsLabel` when an item has one).
+// `uploaded` is shown in lower case;
 // leave it null to work it out from `published`.
 window.VIDEOS = [
   {
@@ -58,7 +59,7 @@ window.SHORTS_SHELF_TITLE = "Work";
 
 // `fit: "contain"` shows the whole picture instead of cropping it to fill.
 // `url` is where the play button offers to take people; items without one have no play button.
-// The `id` is the last part of the address: /work/<id> here, /beliefs/<id> above.
+// The `id` is the last part of the address: /work/<id> here, /worldview/<id> above.
 window.SHORTS = [
   {
     id: "parallaxis",
@@ -66,7 +67,7 @@ window.SHORTS = [
     title: "Parallaxis",
     subtitle: "Jun 2026 - now",
     views: "TBA",
-    uploaded: "everyday (unless hired)",
+    uploaded: "perpetual",
     thumbnail: "img/parallaxis.jpg",
     url: "https://www.youtube.com/@TheParallaxis",
     tags: ["film", "video-essays", "editing", "writing"],
@@ -80,7 +81,8 @@ window.SHORTS = [
     type: "short",
     title: "Maya Narrative Universe",
     subtitle: "Department of Lore, Goa",
-    views: "127K",
+    views: "$700K+",
+    viewsLabel: "pre-sold",
     uploaded: "2 to 14 months ago",
     thumbnail: "img/maya.jpg",
     url: "https://entermaya.com",
@@ -96,7 +98,7 @@ window.SHORTS = [
     title: "Education",
     subtitle: "IIM Bangalore, IB Diploma",
     views: "148 crore",
-    uploaded: "forever",
+    uploaded: "timeless",
     thumbnail: "img/academic.jpg",
     tags: ["education", "debate"],
     text: [

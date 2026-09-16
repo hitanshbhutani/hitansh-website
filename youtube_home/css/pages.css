@@ -267,6 +267,12 @@
 .play-btn:hover { background: var(--red); }
 .loading > .play-btn { visibility: hidden; }
 
+/* the channel page's own short wait */
+#page { position: relative; }
+#page.page-loading > :not(.page-spinner) { visibility: hidden; }
+.page-spinner { visibility: visible; top: 240px; width: 40px; height: 40px; margin: 0 0 0 -20px; }
+.page-spinner circle { stroke: var(--text-2); }
+
 .player-bar {
   position: absolute;
   left: 0;
@@ -490,7 +496,8 @@
 /* not enough room beside the video: the description slides over it,
    opening by itself once the item has loaded */
 @media (max-width: 1100px) {
-  .reel-item { padding-right: 96px; }
+  /* keeps each description inside its own item while it slides */
+  .reel-item { padding-right: 96px; overflow: hidden; }
   .reel-panel,
   .panel-open .reel-panel {
     display: flex;

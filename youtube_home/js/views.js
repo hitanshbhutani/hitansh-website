@@ -31,7 +31,7 @@ const V = (() => {
   const ch = () => window.CHANNEL;
   const byId = (id) => [...window.VIDEOS, ...window.SHORTS].find((x) => x.id === id);
   const href = (item, query) => {
-    const base = item.type === "short" ? "work/" + item.id : "beliefs/" + item.id;
+    const base = item.type === "short" ? "work/" + item.id : "worldview/" + item.id;
     if (!query) return base;
     return base + "?q=" + encodeURIComponent(query);
   };
@@ -63,7 +63,8 @@ const V = (() => {
   }
 
   const when = (item) => escapeHtml((item.uploaded || ago(item.published)).toLowerCase());
-  const views = (item) => escapeHtml(`${item.views} ${item.views === "1" ? "view" : "views"}`);
+  const viewsWord = (item) => item.viewsLabel || (item.views === "1" ? "view" : "views");
+  const views = (item) => escapeHtml(`${item.views} ${viewsWord(item)}`);
   const metaLine = (item) => `${views(item)}<span class="dot"></span>${when(item)}`;
 
   // the loading circle shown until a video "starts"
@@ -82,7 +83,7 @@ const V = (() => {
   }
 
   const badge = (item) =>
-    `<span class="badge">${item.type === "short" ? "WORK" : "BELIEF"}</span>`;
+    `<span class="badge">${item.type === "short" ? "WORK" : "WVIEW"}</span>`;
 
   // only on items with a `url`: it asks before sending people there
   const playBtn = (item) =>
@@ -119,7 +120,7 @@ const V = (() => {
       <div class="short-card">
         <div class="thumb-wrap">
           <a href="${href(item, query)}" data-link>
-            <div class="short-thumb">${thumb(item, false)}</div>
+            <div class="short-thumb">${thumb(item, false)}${badge(item)}</div>
           </a>
         </div>
         <div class="short-meta">
@@ -241,7 +242,7 @@ const V = (() => {
                 ${item.url ? `<button class="icon-btn" data-play="${item.id}" aria-label="Play">${icon("play")}</button>` : ""}
                 <button class="icon-btn" id="ctl-next" aria-label="Next">${icon("next")}</button>
                 <button class="icon-btn" aria-label="Volume">${icon("volume")}</button>
-                <span class="time">BELIEF</span>
+                <span class="time">WVIEW</span>
                 ${item.url ? `<button class="icon-btn" id="ctl-full" aria-label="Full screen">${icon("fullscreen")}</button>` : ""}
               </div>
             </div>
@@ -311,7 +312,7 @@ const V = (() => {
             <h3>${escapeHtml(item.title)}</h3>
             ${item.subtitle ? `<p class="panel-sub">${escapeHtml(item.subtitle)}</p>` : ""}
             <div class="panel-stats">
-              <div><strong>${escapeHtml(item.views)}</strong><span>${item.views === "1" ? "View" : "Views"}</span></div>
+              <div><strong>${escapeHtml(item.views)}</strong><span>${escapeHtml(viewsWord(item).replace(/^./, (c) => c.toUpperCase()))}</span></div>
               <div><strong>${when(item)}</strong><span>Uploaded</span></div>
             </div>
             ${paragraphs(item, query)}
@@ -334,7 +335,7 @@ const V = (() => {
       </div>`;
   }
 
-  const CHANNEL_TABS = [["home", "Home"], ["beliefs", "Beliefs"], ["work", "Work"]];
+  const CHANNEL_TABS = [["home", "Home"], ["worldview", "Worldview"], ["work", "Work"]];
 
   function channel(tab) {
     const c = ch();
@@ -344,9 +345,9 @@ const V = (() => {
       .join("");
     let body = "";
     if (tab !== "work") {
-      body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">Beliefs</h2>` : ""}<div class="video-grid">${window.VIDEOS.map((v) => videoCard(v)).join("")}</div></section>`;
+      body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">Worldview</h2>` : ""}<div class="video-grid">${window.VIDEOS.map((v) => videoCard(v)).join("")}</div></section>`;
     }
-    if (tab !== "beliefs") {
+    if (tab !== "worldview") {
       body += `<section class="shelf">${tab === "home" ? `<h2 class="shelf-head">${icon("shorts")}${escapeHtml(window.SHORTS_SHELF_TITLE)}</h2>` : ""}<div class="shorts-grid">${window.SHORTS.map((v) => shortCard(v)).join("")}</div></section>`;
     }
     return `
@@ -381,5 +382,5 @@ const V = (() => {
     return `<div class="library"><h1>${titles[kind]}</h1>${clear}${list}</div>`;
   }
 
-  return { home, results, watch, shorts, channel, library, byId, href, avatar, viewerAvatar };
+  return { home, results, watch, shorts, channel, library, byId, href, avatar, viewerAvatar, spinner };
 })();

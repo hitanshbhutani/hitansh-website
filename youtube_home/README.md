@@ -8,13 +8,13 @@ Everything that is text lives in `js/data.js`:
 
 - `CHANNEL` - name, picture, banner, and the e-mail and phone shown by Hire
 - `VIEWER` - the signed-in account in the top right (District)
-- `VIDEOS` - the two long videos, Mission and Origin
+- `VIDEOS` - the two long videos, Mission and Origins (the Worldview shelf)
 - `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Education, Film
-- each item's `id` is the end of its address, e.g. `mission` in `/beliefs/mission`
+- each item's `id` is the end of its address, e.g. `mission` in `/worldview/mission`
 - `text` on each one is what shows when it's opened, one string per paragraph
-- `tags` decide which chip (Film, Writing...) each one shows up under
-- `thumbnail` is the picture in `img/`, `views` is the view count, and `uploaded` is the
-  date text shown after it (always in lower case)
+- `tags` let `/?tag=film` filter the home page (the chip bar itself only has All)
+- `thumbnail` is the picture in `img/`, `views` is the view count (`viewsLabel` replaces the
+  word "views", as on Maya), and `uploaded` is the date text shown after it (always in lower case)
 - `url` is where the play button offers to go; items without one get no play button
 
 Search reads straight from `text` and titles, so there's nothing else to update.
@@ -37,15 +37,15 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 ## pages
 
 - `/` home, `/?tag=film` filtered by a chip
-- `/beliefs/mission`, `/beliefs/origins`
+- `/worldview/mission`, `/worldview/origins`
 - `/work/parallaxis`, `/work/maya`, `/work/edu`, `/work/film` - one feed that scrolls
   item by item with the wheel, a trackpad or a swipe
 - `/results?search_query=...`
-- `/@hitanshbhutani` channel page, with `/beliefs` and `/work` tabs
+- `/@hitanshbhutani` channel page, with `/worldview` and `/work` tabs
 - `/feed/history`, `/playlist?list=WL` (watch later), `/playlist?list=LL` (liked)
 
 History, likes, saves and theme are kept in the visitor's browser. Older addresses
-(`/watch?v=...`, `/shorts/...`, `/work/academic`) still open the right page.
+(`/watch?v=...`, `/beliefs/...`, `/shorts/...`, `/work/academic`) still open the right page.
 
 ## preview and publish
 
@@ -53,8 +53,8 @@ Two copies of the site:
 
 - **preview** - https://hitanshbhutani.github.io/resume-website/youtube_home/
   Updates by itself a minute or so after anything is pushed to `main`.
-- **live** - https://hitansh-theta.vercel.app
-  Only changes when I run this from the repo folder:
+- **live** - https://districtansh.vercel.app
+  Only changes when this is run from the repo folder, once each round of changes is pushed:
 
   ```
   npx.cmd vercel --prod --cwd youtube_home

@@ -35,8 +35,7 @@
         ${item("work", "shorts", "Work", "work")}
       </div>
       <div class="guide-section">
-        <a class="guide-title" href="${C.handle}" data-link>Channel ${icon("chevron")}</a>
-        ${item(C.handle, "you", `${escapeHtml(C.shortName)}'s channel`, "channel")}
+        <a class="guide-title" href="playlist?list=WL" data-link>Saved ${icon("chevron")}</a>
         ${item("feed/history", "history", "History", "history")}
         ${item("playlist?list=WL", "later", "Watch later", "later")}
         ${item("playlist?list=LL", "like", "Liked videos", "liked")}
@@ -50,7 +49,7 @@
     $("#mini-guide").innerHTML =
       mini("./", "home", "Home", "home") +
       mini("work", "shorts", "Work", "work") +
-      mini(C.handle, "you", "Channel", "channel");
+      mini("playlist?list=WL", "saved", "Saved", "later");
   }
 
   function markGuide(key) {
@@ -96,7 +95,7 @@
   if (redirect) history.replaceState({}, "", redirect.replace(/^[/\\]+/, ""));
 
   // older addresses that still open the right item
-  const RENAMED = { origin: "origins", academic: "edu", education: "edu" };
+  const RENAMED = { origin: "origins", academic: "edu", education: "edu", beliefs: "worldview" };
 
   function itemFor(given, type, list) {
     const id = RENAMED[given] || given || list[0].id;
@@ -104,9 +103,11 @@
     return item && item.type === type ? item : null;
   }
 
-  // how long a video takes to "start" after it's clicked or scrolled to
-  const VST = 800;
+  // how long a video takes to "start" after it's clicked or scrolled to,
+  // and how long the channel page takes to appear (the loading bar in styles.css matches)
+  const VST = 400;
   let playerTimer = 0;
+  let pageTimer = 0;
   let reelTimer = 0;
   let reelObserver = null;
 
@@ -142,6 +143,8 @@
   function render({ instant = false } = {}) {
     clearTimeout(playerTimer);
     clearTimeout(reelTimer);
+    clearTimeout(pageTimer);
+    page.classList.remove("page-loading");
     if (reelObserver) reelObserver.disconnect();
     reelObserver = null;
 
@@ -161,12 +164,12 @@
       setSearchValue(sq);
       page.innerHTML = V.results(sq);
       title = sq + " - " + C.name;
-    } else if ((path === "/watch" || /^\/beliefs(\/|$)/.test(path)) &&
+    } else if ((path === "/watch" || /^\/(worldview|beliefs)(\/|$)/.test(path)) &&
                itemFor(path === "/watch" ? q.get("v") : path.split("/")[2], "video", window.VIDEOS)) {
-      // /watch?v= links from before still open, under their /beliefs/ address
+      // /watch?v= and /beliefs/ links from before still open, under their /worldview/ address
       const item = itemFor(path === "/watch" ? q.get("v") : path.split("/")[2], "video", window.VIDEOS);
-      if (path !== "/beliefs/" + item.id) {
-        history.replaceState({}, "", "beliefs/" + item.id + (query ? "?q=" + encodeURIComponent(query) : ""));
+      if (path !== "/worldview/" + item.id) {
+        history.replaceState({}, "", "worldview/" + item.id + (query ? "?q=" + encodeURIComponent(query) : ""));
       }
       body.classList.add("no-guide");
       page.innerHTML = V.watch(item, query);
@@ -185,9 +188,22 @@
       setupReels(index, instant);
       if (!instant) navProgress();
     } else if (path.startsWith("/" + C.handle)) {
-      const tab = path.split("/")[2] || "home";
-      page.innerHTML = V.channel(["beliefs", "work"].includes(tab) ? tab : "home");
+      const given = path.split("/")[2];
+      const tab = RENAMED[given] || given;
+      page.innerHTML = V.channel(["worldview", "work"].includes(tab) ? tab : "home");
+      if (given === "beliefs") history.replaceState({}, "", C.handle + "/worldview");
       key = "channel";
+      // the channel page takes a moment to appear too
+      if (!instant) {
+        page.classList.add("page-loading");
+        page.insertAdjacentHTML("beforeend", V.spinner.replace('class="spinner"', 'class="spinner page-spinner"'));
+        pageTimer = setTimeout(() => {
+          page.classList.remove("page-loading");
+          const s = $(".page-spinner");
+          if (s) s.remove();
+        }, VST);
+        navProgress();
+      }
     } else if (path === "/feed/history") {
       page.innerHTML = V.library("history");
       key = "history";
@@ -271,13 +287,14 @@
     scroller.scrollTop = items[startIndex].offsetTop;
 
     let active = -1;
+    const videoOf = (i) => items[i].querySelector(".reel-video");
     const activate = (i, skipDelay) => {
       if (i === active) return;
       active = i;
       const item = window.SHORTS[i];
       clearTimeout(reelTimer);
-      items.forEach((el) => el.querySelector(".reel-video").classList.add("loading"));
-      const video = items[i].querySelector(".reel-video");
+      const video = videoOf(i);
+      video.classList.add("loading");
       const start = () => {
         video.classList.remove("loading");
         if (!panelSideBySide()) feed.classList.add("panel-open");
@@ -318,9 +335,21 @@
     }, { passive: false });
 
     activate(startIndex, instant);
+    // an item becomes active when most of it is on screen; once it has left the screen
+    // completely it goes back to loading, so returning to it shows the delay again
     reelObserver = new IntersectionObserver(
-      (entries) => entries.forEach((en) => en.isIntersecting && activate(+en.target.dataset.index)),
-      { root: scroller, threshold: 0.6 }
+      (entries) => {
+        // activate first, so the item being left isn't still counted as active
+        entries.forEach((en) => en.isIntersecting && en.intersectionRatio >= 0.6 && activate(+en.target.dataset.index));
+        // items are stacked edge to edge, so the one just left still "touches" the screen
+        // with nothing showing; that counts as gone
+        entries.forEach((en) => {
+          const i = +en.target.dataset.index;
+          const gone = !en.isIntersecting || en.intersectionRatio < 0.01;
+          if (gone && i !== active) videoOf(i).classList.add("loading");
+        });
+      },
+      { root: scroller, threshold: [0, 0.6] }
     );
     items.forEach((el) => reelObserver.observe(el));
   }
@@ -340,9 +369,10 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
   }
 
-  // copies the address of the page that's open
-  async function share() {
-    const url = location.href;
+  const linkTo = (item) => new URL(V.href(item), document.baseURI).href;
+
+  // copies `url`, which is the page that's open unless a card's menu passes its item's link
+  async function share(url = location.href) {
     try {
       await navigator.clipboard.writeText(url);
       toast("Link copied to clipboard");
@@ -469,7 +499,7 @@
       const on = Store.toggle("later", value);
       toast(on ? "Saved to Watch later" : "Removed from Watch later");
     } else if (kind === "share") {
-      share();
+      share(linkTo(V.byId(value)));
     } else if (kind === "theme") {
       setTheme(value);
     } else if (kind === "theme-open") {
