@@ -6,11 +6,13 @@ My resume as a video site homepage. Plain HTML, CSS and JavaScript, no build ste
 
 Everything that is text lives in `js/data.js`:
 
+- `CHANNEL` - name, picture, banner, and the e-mail and phone shown by Hire
+- `VIEWER` - the signed-in account in the top right (District)
 - `VIDEOS` - the two long videos, Mission and Origin
-- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Academic
+- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Academic, Film
 - `text` on each one is what shows when it's opened, one string per paragraph
 - `tags` decide which chip (Film, Writing...) each one shows up under
-- `thumbnail` can point at an image in `img/` to replace the drawn card
+- `thumbnail` is the picture in `img/`, and `uploaded` is the date text shown under it
 
 Search reads straight from `text` and titles, so there's nothing else to update.
 
@@ -20,6 +22,8 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 - `css/styles.css` - header, side menu, menus, light and dark colours
 - `css/pages.css` - home grid, shorts, watch page, search results, channel page
 - `js/data.js` - content
+- `img/` - thumbnails, channel picture and banner, resized for the web
+- `fonts/` - League Gothic Condensed, used for the logo
 - `js/search.js` - search and autocomplete
 - `js/views.js` - builds each page
 - `js/app.js` - routing, search box, buttons
@@ -29,9 +33,9 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 
 - `/` home, `/?tag=film` filtered by a chip
 - `/watch?v=mission`, `/watch?v=origin`
-- `/shorts/parallaxis`, `/shorts/maya`, `/shorts/academic`
+- `/work/parallaxis`, `/work/maya`, `/work/academic`, `/work/film`
 - `/results?search_query=...`
-- `/@hitanshbhutani` channel page
+- `/@hitanshbhutani` channel page, with `/beliefs` and `/work` tabs
 - `/feed/history`, `/playlist?list=WL` (watch later), `/playlist?list=LL` (liked)
 
 History, likes, saves and theme are kept in the visitor's browser.
@@ -49,7 +53,7 @@ Two copies of the site:
   npx.cmd vercel --prod --cwd youtube_home
   ```
 
-GitHub Pages can't handle addresses like `/youtube_home/shorts/maya` on its own,
+GitHub Pages can't handle addresses like `/youtube_home/work/maya` on its own,
 so `404.html` in the repo root sends them to this folder and the site puts the
 address back. The `vercel.json` in the repo root turns off Vercel's git
 deploys, so a push never reaches the live site.

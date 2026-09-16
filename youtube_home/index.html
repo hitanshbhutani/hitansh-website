@@ -8,7 +8,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 20'%3E%3Crect width='28' height='20' rx='6' fill='%23ff0033'/%3E%3Cpath d='M11 5.5v9l7.5-4.5z' fill='white'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Anton&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <script>
     // The site sits at the root on Vercel, but in a sub-folder on GitHub Pages,
     // where it is always opened at that folder's own address.
@@ -31,7 +31,7 @@
       <button class="icon-btn" id="guide-toggle" aria-label="Menu"></button>
       <a class="logo" href="./" data-link aria-label="Home">
         <span class="logo-mark"><svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="6" fill="#ff0033"/><path d="M11 5.5v9l7.5-4.5z" fill="#fff"/></svg></span>
-        <span class="logo-word">Hitansh</span><sup class="logo-cc">IN</sup>
+        <span class="logo-word">Districtansh</span><sup class="logo-cc">IN</sup>
       </a>
     </div>
 
@@ -55,7 +55,7 @@
         <button class="create-btn" id="create-btn" aria-haspopup="true"><span class="create-icon"></span><span>Create</span></button>
       </div>
       <div class="menu-anchor">
-        <button class="icon-btn" id="bell-btn" aria-label="Notifications" aria-haspopup="true"><span class="bell-dot"></span></button>
+        <button class="icon-btn" id="bell-btn" aria-label="Notifications" aria-haspopup="true"></button>
       </div>
       <div class="menu-anchor">
         <button class="avatar-btn" id="avatar-btn" aria-label="Account menu" aria-haspopup="true"></button>
@@ -70,6 +70,10 @@
   <main id="page"></main>
 
   <div id="popup" hidden></div>
+  <dialog id="hire-dialog" aria-label="Hire">
+    <button class="icon-btn dialog-close" id="hire-close" aria-label="Close"></button>
+    <div class="hire-lines" id="hire-lines"></div>
+  </dialog>
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script src="js/data.js"></script>

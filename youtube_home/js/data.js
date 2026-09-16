@@ -1,25 +1,35 @@
-// Everything on the site that is words lives in this file.
+// Everything on the site that is words or pictures lives in this file.
 // To change what a video says when it's opened, edit its `text` array -
 // one string per paragraph. Search picks up the new text automatically.
 
+// The channel whose videos these are.
 window.CHANNEL = {
   name: "Hitansh Bhutani",
+  shortName: "Hitansh",
   handle: "@hitanshbhutani",
   initials: "HB",
-  avatar: null, // e.g. "img/avatar.jpg"
-  location: "New Delhi, India",
+  avatar: "img/channel-avatar.jpg",
+  banner: "img/banner.jpg",
   tagline: "Screenwriter, director, editor and video essayist.",
   email: "hitansh.bhutani@gmail.com",
+  phone: "+91-9810504325",
 };
 
+// The account shown as signed in, top right.
+window.VIEWER = {
+  name: "District",
+  handle: "@districtculture",
+  avatar: "img/viewer-avatar.jpg",
+};
+
+// `uploaded` is shown as written. Leave it null to work it out from `published`.
 window.VIDEOS = [
   {
     id: "mission",
     type: "video",
     title: "Mission",
-    published: "2026-09-01",
-    thumbnail: null, // e.g. "img/mission.jpg" - leave null for the drawn card
-    art: "mission",
+    uploaded: "Tomorrow",
+    thumbnail: "img/mission.jpg",
     tags: ["film", "writing", "directing", "video-essays"],
     text: [
       "PLACEHOLDER - paste the Mission text here.",
@@ -30,9 +40,8 @@ window.VIDEOS = [
     id: "origin",
     type: "video",
     title: "Origin",
-    published: "2026-08-20",
-    thumbnail: null,
-    art: "origin",
+    uploaded: "19 Years Ago",
+    thumbnail: "img/origin.jpg",
     tags: ["film", "writing", "debate"],
     text: [
       "PLACEHOLDER - paste the Origin text here.",
@@ -43,15 +52,16 @@ window.VIDEOS = [
 
 window.SHORTS_SHELF_TITLE = "Work";
 
+// `fit: "contain"` shows the whole picture instead of cropping it to fill.
 window.SHORTS = [
   {
     id: "parallaxis",
     type: "short",
     title: "Parallaxis",
     subtitle: "Jun 2026 - now",
+    uploaded: null,
     published: "2026-06-01",
-    thumbnail: null,
-    art: "parallaxis",
+    thumbnail: "img/parallaxis.jpg",
     tags: ["film", "video-essays", "editing", "writing"],
     text: [
       "PLACEHOLDER - paste the Parallaxis text here.",
@@ -63,9 +73,8 @@ window.SHORTS = [
     type: "short",
     title: "Maya Narrative Universe",
     subtitle: "Department of Lore, Goa",
-    published: "2025-08-01",
-    thumbnail: null,
-    art: "maya",
+    uploaded: "1 Year Ago",
+    thumbnail: "img/maya.jpg",
     tags: ["world-building", "writing", "directing"],
     text: [
       "PLACEHOLDER - paste the Maya Narrative Universe text here.",
@@ -77,13 +86,26 @@ window.SHORTS = [
     type: "short",
     title: "Academic",
     subtitle: "IIM Bangalore, IB Diploma",
-    published: "2025-09-01",
-    thumbnail: null,
-    art: "academic",
+    uploaded: "2 Years Later",
+    thumbnail: "img/academic.jpg",
     tags: ["education", "debate"],
     text: [
       "PLACEHOLDER - paste the Academic text here.",
       "BBA in Digital Business and Entrepreneurship at IIM Bangalore. International Baccalaureate diploma from Hiranandani Upscale School, Chennai.",
+    ],
+  },
+  {
+    id: "film",
+    type: "short",
+    title: "Film",
+    subtitle: "Chennai",
+    uploaded: "2 to 4 Years Ago",
+    thumbnail: "img/film.webp",
+    fit: "contain",
+    tags: ["film", "directing", "writing", "editing"],
+    text: [
+      "PLACEHOLDER - paste the Film text here.",
+      "A 23-page non-linear short film, written, directed and edited in Chennai, from storyboards through to ADR and foley.",
     ],
   },
 ];
@@ -99,12 +121,4 @@ window.CHIPS = [
   { label: "World-building", tag: "world-building" },
   { label: "Debate", tag: "debate" },
   { label: "Education", tag: "education" },
-];
-
-// "Subscriptions" in the side menu. Clicking one runs a search for `query`.
-window.SUBSCRIPTIONS = [
-  { name: "Parallaxis", query: "Parallaxis", color: "#d4a017" },
-  { name: "Department of Lore", query: "Maya", color: "#2f6f5e" },
-  { name: "IIM Bangalore", query: "IIM Bangalore", color: "#8a3b2e" },
-  { name: "Model UN", query: "Model UN", color: "#3a5a8c" },
 ];

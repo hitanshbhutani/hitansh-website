@@ -16,17 +16,14 @@
   $("#search-open").innerHTML = icon("search");
   $(".create-icon").innerHTML = icon("add");
   $("#bell-btn").insertAdjacentHTML("afterbegin", icon("bell"));
-  $("#avatar-btn").innerHTML = V.avatar();
-  $(".avatar-btn .avatar").style.cssText = "width:32px;height:32px;font-size:13px";
+  $("#avatar-btn").innerHTML = V.viewerAvatar();
+  $(".avatar-btn .avatar").style.cssText = "width:32px;height:32px";
+  const channelLabel = `View ${escapeHtml(C.shortName)}'s channel`;
 
   // ---------- side menu ----------
   function renderGuide() {
     const item = (path, ic, label, key) =>
       `<a class="guide-item" href="${path}" data-link data-key="${key}">${icon(ic)}<span>${label}</span></a>`;
-    const subs = window.SUBSCRIPTIONS.map(
-      (s) =>
-        `<a class="guide-item" href="results?search_query=${encodeURIComponent(s.query)}" data-link><span class="avatar" style="background:${s.color};color:#fff">${escapeHtml(s.name[0])}</span><span>${escapeHtml(s.name)}</span></a>`
-    ).join("");
 
     $("#guide").innerHTML = `
       <div class="drawer-head">
@@ -35,27 +32,17 @@
       </div>
       <div class="guide-section">
         ${item("./", "home", "Home", "home")}
-        ${item("shorts", "shorts", "Shorts", "shorts")}
+        ${item("work", "shorts", "Work", "work")}
         ${item("feed/subscriptions", "subs", "Subscriptions", "subscriptions")}
       </div>
       <div class="guide-section">
         <a class="guide-title" href="${C.handle}" data-link>You ${icon("chevron")}</a>
-        ${item(C.handle, "you", "Your channel", "channel")}
+        ${item(C.handle, "you", `${escapeHtml(C.shortName)}'s channel`, "channel")}
         ${item("feed/history", "history", "History", "history")}
         ${item("playlist?list=WL", "later", "Watch later", "later")}
         ${item("playlist?list=LL", "like", "Liked videos", "liked")}
       </div>
-      <div class="guide-section">
-        <div class="guide-title">Subscriptions</div>
-        ${subs}
-      </div>
-      <div class="guide-section">
-        <div class="guide-title">Get in touch</div>
-        <a class="guide-item" href="mailto:${C.email}">${icon("mail")}<span>Email</span></a>
-        <button class="guide-item" style="width:100%" data-action="theme-menu">${icon("theme")}<span>Appearance</span></button>
-      </div>
       <div class="guide-footer">
-        <a href="${C.handle}" data-link>About</a><a href="mailto:${C.email}">Contact</a>
         <p>&copy; ${new Date().getFullYear()} ${escapeHtml(C.name)}</p>
       </div>`;
 
@@ -63,7 +50,7 @@
       `<a class="mini-item" href="${path}" data-link data-key="${key}">${icon(ic)}<span>${label}</span></a>`;
     $("#mini-guide").innerHTML =
       mini("./", "home", "Home", "home") +
-      mini("shorts", "shorts", "Shorts", "shorts") +
+      mini("work", "shorts", "Work", "work") +
       mini("feed/subscriptions", "subs", "Subscriptions", "subscriptions") +
       mini(C.handle, "you", "You", "channel");
   }
@@ -151,20 +138,21 @@
       Store.push("history", item.id);
       title = item.title + " - " + C.name;
       setupWatch(item);
-    } else if (path === "/shorts" || (path.startsWith("/shorts/") && V.byId(path.split("/")[2]))) {
+    } else if (/^\/(work|shorts)(\/|$)/.test(path) && (!path.split("/")[2] || V.byId(path.split("/")[2]))) {
+      // old /shorts/ links still open, under their /work/ address
       const id = path.split("/")[2] || window.SHORTS[0].id;
-      if (!path.split("/")[2]) history.replaceState({}, "", "shorts/" + id);
+      if (path !== "/work/" + id) history.replaceState({}, "", "work/" + id + location.search);
       const index = window.SHORTS.findIndex((s) => s.id === id);
       const item = window.SHORTS[index];
       page.innerHTML = V.shorts(item, index, query);
       Store.push("history", item.id);
-      key = "shorts";
+      key = "work";
       title = item.title + " - " + C.name;
       const panelHidden = Store.get("panelHidden", false) && window.innerWidth > 640;
       if (panelHidden) togglePanel(false);
     } else if (path.startsWith("/" + C.handle)) {
       const tab = path.split("/")[2] || "home";
-      page.innerHTML = V.channel(["videos", "shorts"].includes(tab) ? tab : "home");
+      page.innerHTML = V.channel(["beliefs", "work"].includes(tab) ? tab : "home");
       key = "channel";
     } else if (path === "/feed/history") {
       page.innerHTML = V.library("history");
@@ -180,7 +168,6 @@
 
     if (path !== "/results") setSearchValue("");
     markGuide(key);
-    bellCount();
     document.title = title;
     window.scrollTo(0, 0);
   }
@@ -210,7 +197,7 @@
     };
     $("#player-play").addEventListener("click", toText);
     $("#ctl-play").addEventListener("click", toText);
-    $("#player .art, #player img") && $("#player .art, #player img").addEventListener("click", toText);
+    $("#player .thumb-img").addEventListener("click", toText);
 
     const all = [...window.VIDEOS, ...window.SHORTS];
     const next = all[(all.findIndex((x) => x.id === item.id) + 1) % all.length];
@@ -290,7 +277,7 @@
     if (tab) return go(C.handle + (tab.dataset.tab === "home" ? "" : "/" + tab.dataset.tab));
 
     const reel = e.target.closest("[data-reel]");
-    if (reel && !reel.disabled) return go("shorts/" + window.SHORTS[+reel.dataset.reel].id);
+    if (reel && !reel.disabled) return go("work/" + window.SHORTS[+reel.dataset.reel].id);
 
     const menu = e.target.closest("[data-menu]");
     if (menu) {
@@ -303,13 +290,9 @@
     const item = btn.dataset.id && V.byId(btn.dataset.id);
 
     switch (btn.dataset.action) {
-      case "subscribe": {
-        const on = !Store.get("subscribed", false);
-        Store.set("subscribed", on);
-        toast(on ? "Subscription added" : "Subscription removed");
-        rerender();
+      case "hire":
+        openHire();
         break;
-      }
       case "like": {
         const on = Store.toggle("liked", item.id);
         toast(on ? "Added to Liked videos" : "Removed from Liked videos");
@@ -328,9 +311,6 @@
         rerender();
         break;
       }
-      case "email":
-        location.href = "mailto:" + C.email;
-        break;
       case "panel":
         togglePanel();
         break;
@@ -341,10 +321,6 @@
         break;
       case "close-drawer":
         closeDrawer();
-        break;
-      case "theme-menu":
-        e.stopPropagation();
-        openThemeMenu(btn);
         break;
     }
   });
@@ -419,45 +395,48 @@
     e.stopPropagation();
     openPopup(
       e.currentTarget,
-      `<a class="pop-item" href="mailto:${C.email}">${icon("mail")}<span>Email me</span></a>` +
-        `<a class="pop-item" href="${C.handle}" data-link>${icon("you")}<span>About me</span></a>`
+      `<a class="pop-item" href="${C.handle}" data-link>${icon("you")}<span>${channelLabel}</span></a>`
     );
   });
 
-  // notifications: one per short, marked read once opened
-  const bellCount = () => {
-    const seen = Store.get("history", []);
-    const unread = window.SHORTS.filter((s) => !seen.includes(s.id)).length;
-    $(".bell-dot").textContent = unread ? String(unread) : "";
-  };
-
   $("#bell-btn").addEventListener("click", (e) => {
     e.stopPropagation();
-    const list = [...window.SHORTS, ...window.VIDEOS]
-      .map(
-        (s) => `
-        <a class="notif" href="${V.href(s)}" data-link>
-          ${V.avatar()}
-          <div class="notif-body">${escapeHtml(C.name)} uploaded: ${escapeHtml(s.title)}<small>${V.ago(s.published)}</small></div>
-          <div class="notif-thumb"><div class="thumb" style="border-radius:4px">${V.art(s)}</div></div>
-        </a>`
-      )
-      .join("");
-    openPopup(e.currentTarget, `<div class="pop-title">Notifications</div><div class="pop-sep" style="margin-top:0"></div>${list}`);
+    openPopup(
+      e.currentTarget,
+      `<div class="pop-title">Notifications</div><div class="pop-sep" style="margin-top:0"></div>
+       <div class="notif-empty">${icon("bell")}<strong>Your notifications live here</strong><span>Subscribe to your favorite channels to receive notifications about their latest videos.</span></div>`
+    );
   });
 
   $("#avatar-btn").addEventListener("click", (e) => {
     e.stopPropagation();
     openPopup(
       e.currentTarget,
-      `<div class="pop-head">${V.avatar()}<div><strong>${escapeHtml(C.name)}</strong><small>${escapeHtml(C.handle)}</small><a href="${C.handle}" data-link>View your channel</a></div></div>
+      `<div class="pop-head">${V.viewerAvatar()}<div><strong>${escapeHtml(window.VIEWER.name)}</strong><small>${escapeHtml(window.VIEWER.handle)}</small><a href="${C.handle}" data-link>${channelLabel}</a></div></div>
        <div class="pop-sep"></div>
        <a class="pop-item" href="feed/history" data-link>${icon("history")}<span>History</span></a>
-       <a class="pop-item" href="mailto:${C.email}">${icon("mail")}<span>${escapeHtml(C.email)}</span></a>
        <div class="pop-sep"></div>
-       <button class="pop-item" data-pop="theme-open">${icon("theme")}<span>Appearance: ${themeLabel()}</span>${icon("chevron")}</button>
-       <div class="pop-sub">${escapeHtml(C.location)}</div>`
+       <button class="pop-item" data-pop="theme-open">${icon("theme")}<span>Appearance: ${themeLabel()}</span>${icon("chevron")}</button>`
     );
+  });
+
+  // ---------- hire dialog ----------
+  const hire = $("#hire-dialog");
+  $("#hire-close").innerHTML = icon("close");
+  $("#hire-lines").innerHTML = `
+    <p>${icon("mail")}<span>E-mail: ${escapeHtml(C.email)}</span></p>
+    <p>${icon("phone")}<span>Phone: ${escapeHtml(C.phone)}</span></p>`;
+
+  function openHire() {
+    closePopup();
+    if (hire.showModal) hire.showModal();
+    else hire.setAttribute("open", "");
+  }
+  const closeHire = () => (hire.close ? hire.close() : hire.removeAttribute("open"));
+  $("#hire-close").addEventListener("click", closeHire);
+  // a click on the dimmed area outside the box lands on the dialog itself
+  hire.addEventListener("click", (e) => {
+    if (e.target === hire) closeHire();
   });
 
   // ---------- theme ----------
@@ -658,9 +637,10 @@
     if (e.key === "Escape") {
       closePopup();
       closeDrawer();
+      if (hire.open) closeHire();
     }
-    if (!typing && routePath().startsWith("/shorts/") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
-      const btn = document.querySelector(`.reel-nav [aria-label="${e.key === "ArrowDown" ? "Next" : "Previous"} short"]`);
+    if (!typing && routePath().startsWith("/work/") && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      const btn = document.querySelector(`.reel-nav [data-dir="${e.key === "ArrowDown" ? "next" : "prev"}"]`);
       if (btn && !btn.disabled) {
         e.preventDefault();
         btn.click();
