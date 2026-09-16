@@ -148,5 +148,9 @@ window.SHORTS = [
   },
 ];
 
-// The chip bar under the header.
-window.CHIPS = [{ label: "All", tag: null }];
+// The chip bar under the header. `type` shows only long videos ("video") or only Work ("short").
+window.CHIPS = [
+  { label: "All", tag: null },
+  { label: "Worldview", tag: "worldview", type: "video" },
+  { label: "Work", tag: "work", type: "short" },
+];

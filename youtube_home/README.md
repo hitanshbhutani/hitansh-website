@@ -12,7 +12,8 @@ Everything that is text lives in `js/data.js`:
 - `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Education, Film
 - each item's `id` is the end of its address, e.g. `mission` in `/worldview/mission`
 - `text` on each one is what shows when it's opened, one string per paragraph
-- `tags` let `/?tag=film` filter the home page (the chip bar itself only has All)
+- `CHIPS` - the bar under the header: All, Worldview (long videos only), Work (Work only)
+- `tags` also let `/?tag=film` filter the home page
 - `thumbnail` is the picture in `img/`, `views` is the view count (`viewsLabel` replaces the
   word "views", as on Maya), and `uploaded` is the date text shown after it (always in lower case)
 - `url` is where the play button offers to go; items without one get no play button
@@ -36,7 +37,7 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 
 ## pages
 
-- `/` home, `/?tag=film` filtered by a chip
+- `/` home, `/?tag=worldview` and `/?tag=work` from the chips, `/?tag=film` by item tag
 - `/worldview/mission`, `/worldview/origins`
 - `/work/parallaxis`, `/work/maya`, `/work/edu`, `/work/film` - one feed that scrolls
   item by item with the wheel, a trackpad or a swipe

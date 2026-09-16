@@ -174,15 +174,17 @@ const V = (() => {
       </div>`;
   }
 
-  const workShelf = (items, title, query) => `
-    <section class="shelf">
+  const workShelf = (items, title, query, first = false) => `
+    <section class="shelf ${first ? "first" : ""}">
       <h2 class="shelf-head">${icon("shorts")}${escapeHtml(title)}</h2>
       <div class="shorts-grid">${items.map((s) => shortCard(s, query)).join("")}</div>
     </section>`;
 
   // ---- pages ----
   function home(activeTag) {
-    const match = (i) => !activeTag || i.tags.includes(activeTag);
+    // a chip with a `type` keeps one kind of item; any other ?tag= matches item tags
+    const chip = window.CHIPS.find((c) => c.tag === activeTag) || { tag: activeTag };
+    const match = (i) => !chip.tag || (chip.type ? i.type === chip.type : i.tags.includes(chip.tag));
     const videos = window.VIDEOS.filter(match);
     const shorts = window.SHORTS.filter(match);
     const chips = window.CHIPS.map(
@@ -191,7 +193,7 @@ const V = (() => {
 
     let body = "";
     if (videos.length) body += `<div class="video-grid">${videos.map((v) => videoCard(v)).join("")}</div>`;
-    if (shorts.length) body += workShelf(shorts, window.SHORTS_SHELF_TITLE);
+    if (shorts.length) body += workShelf(shorts, window.SHORTS_SHELF_TITLE, "", !videos.length);
     if (!body) body = empty("No videos here yet", "Try another topic.");
 
     return `<div class="chips-bar"><div class="chips">${chips}</div></div><div class="feed">${body}</div>`;
