@@ -52,9 +52,34 @@
   border-radius: 12px;
   overflow: hidden;
   background: #1a1a1a;
-  transition: border-radius 0.2s ease;
 }
-.card:hover .thumb { border-radius: 0; }
+
+/* Hover panel, matching YouTube's video cards: it reaches 12px past the card on every side,
+   has 16px corners, and on hover fades in while growing from 90% to full size. */
+.hover-fx {
+  position: absolute;
+  inset: 0;
+  margin: -12px;
+  pointer-events: none;
+}
+.hover-fx::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: rgba(var(--hover-rgb), var(--hover-alpha));
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.3s cubic-bezier(0.05, 0, 0, 1), transform 0.3s cubic-bezier(0.05, 0, 0, 1);
+  will-change: opacity, transform;
+}
+@media (hover: hover) {
+  .card:hover > .hover-fx::before,
+  .short-card:hover > .hover-fx::before { opacity: 1; transform: none; }
+}
+@media (hover: none) {
+  .hover-fx { display: none; }
+}
 
 .badge {
   position: absolute;
@@ -261,7 +286,8 @@
 .loading > .play-btn { visibility: hidden; }
 
 /* the channel page's own short wait */
-#page { position: relative; }
+/* hover panels reach past edge-to-edge cards on narrow screens; don't let that scroll sideways */
+#page { position: relative; overflow-x: clip; }
 #page.page-loading > :not(.page-spinner) { visibility: hidden; }
 .page-spinner { visibility: visible; top: 240px; width: 40px; height: 40px; margin: 0 0 0 -20px; }
 .page-spinner circle { stroke: var(--text-2); }

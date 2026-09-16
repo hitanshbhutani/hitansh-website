@@ -17,6 +17,8 @@ Everything that is text lives in `js/data.js`:
 - `thumbnail` is the picture in `img/`, `views` is the view count (`viewsLabel` replaces the
   word "views", as on Maya), and `uploaded` is the date text shown after it (always in lower case)
 - `url` is where the play button offers to go; items without one get no play button
+- `hover` is the tint (red, green, blue) behind a card under the pointer, taken from its
+  thumbnail; it shows at 17% in dark mode and 13% in light mode, like YouTube's
 
 Search reads straight from `text` and titles, so there's nothing else to update.
 

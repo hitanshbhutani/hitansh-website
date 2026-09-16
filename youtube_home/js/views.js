@@ -91,6 +91,9 @@ const V = (() => {
       ? `<button class="play-btn" data-play="${item.id}" aria-label="Play ${escapeHtml(item.title)}">${icon("play")}</button>`
       : "";
 
+  // the tinted panel that grows in behind a card under the pointer
+  const hoverFx = (item) => `<div class="hover-fx" style="--hover-rgb: ${item.hover || "135, 135, 135"}"></div>`;
+
   const menuBtn = (item) =>
     `<button class="icon-btn card-menu" data-menu="${item.id}" aria-label="Action menu">${icon("more")}</button>`;
 
@@ -98,6 +101,7 @@ const V = (() => {
   function videoCard(item) {
     return `
       <div class="card">
+        ${hoverFx(item)}
         <div class="thumb-wrap">
           <a class="card-link" href="${href(item)}" data-link>
             <div class="thumb">${thumb(item, true)}${badge(item)}${watchedBar(item)}</div>
@@ -118,6 +122,7 @@ const V = (() => {
   function shortCard(item, query) {
     return `
       <div class="short-card">
+        ${hoverFx(item)}
         <div class="thumb-wrap">
           <a href="${href(item, query)}" data-link>
             <div class="short-thumb">${thumb(item, false)}${badge(item)}</div>

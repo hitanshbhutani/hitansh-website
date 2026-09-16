@@ -33,6 +33,7 @@ window.VIDEOS = [
     views: "8.3B",
     uploaded: "tomorrow",
     thumbnail: "img/mission.jpg",
+    hover: "135, 135, 135",
     tags: ["film", "writing", "directing", "video-essays"],
     text: [
       "Kubrick was half decent at the whole audiovisual medium thing, but there can only be so many Kubricks.",
@@ -54,6 +55,7 @@ window.VIDEOS = [
     views: "1",
     uploaded: "16 years ago",
     thumbnail: "img/origin.jpg",
+    hover: "201, 183, 69",
     tags: ["film", "writing", "debate"],
     text: [
       "Eight years before this photograph was taken, the first feature film shot entirely on digital cameras came out in theaters.",
@@ -77,6 +79,9 @@ window.SHORTS_SHELF_TITLE = "Work";
 // `fit: "contain"` shows the whole picture instead of cropping it to fill.
 // `url` is where the play button offers to take people; items without one have no play button.
 // The `id` is the last part of the address: /work/<id> here, /worldview/<id> above.
+// `hover` is the red, green, blue of the tint behind a card under the pointer. It was worked
+// out from each thumbnail: the average hue weighted by how colourful each pixel is, set to
+// 55% saturation and 53% lightness, or grey (135, 135, 135) when the picture has little colour.
 window.SHORTS = [
   {
     id: "parallaxis",
@@ -85,6 +90,7 @@ window.SHORTS = [
     views: "TBA",
     uploaded: "perpetual",
     thumbnail: "img/parallaxis.jpg",
+    hover: "201, 184, 69",
     url: "https://www.youtube.com/@TheParallaxis",
     tags: ["film", "video-essays", "editing", "writing"],
     text: [
@@ -102,6 +108,7 @@ window.SHORTS = [
     viewsLabel: "pre-sold",
     uploaded: "2 to 14 months ago",
     thumbnail: "img/maya.jpg",
+    hover: "135, 135, 135",
     url: "https://entermaya.com",
     tags: ["world-building", "writing", "directing"],
     text: [
@@ -120,6 +127,7 @@ window.SHORTS = [
     views: "148 crore",
     uploaded: "timeless",
     thumbnail: "img/academic.jpg",
+    hover: "201, 69, 74",
     tags: ["education", "debate"],
     text: [
       "IIM Bangalore Bachelors in Business Administration\n(Digital Business and Entrepreneurship) - Entrance Examination AIR 36 of 6000+.\n[Distance Learning with In-Person Exams, Graduating 2029]",
@@ -138,6 +146,7 @@ window.SHORTS = [
     views: "1K",
     uploaded: "2 to 3 years ago",
     thumbnail: "img/film.jpg",
+    hover: "201, 91, 69",
     url: "https://www.youtube.com/watch?v=MVwDkSDxSMQ",
     tags: ["film", "directing", "writing", "editing"],
     text: [

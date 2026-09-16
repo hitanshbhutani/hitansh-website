@@ -15,6 +15,7 @@
   --menu-shadow: 0 4px 32px rgba(0, 0, 0, 0.1);
   --red: #ff0033;
   --link: #065fd4;
+  --hover-alpha: 0.13;
   --guide-w: 240px;
   --mini-w: 72px;
   --mh-h: 56px;
@@ -37,12 +38,14 @@
     --inverse-text: #0f0f0f;
     --menu-shadow: none;
     --link: #3ea6ff;
+    --hover-alpha: 0.17;
     color-scheme: dark;
   }
   :root:not([data-theme="light"]) .search-box input { background: #121212; }
 }
 
 :root[data-theme="dark"] {
+  --hover-alpha: 0.17;
   --bg: #0f0f0f;
   --bg-raised: #282828;
   --text: #f1f1f1;
