@@ -41,7 +41,7 @@ window.VIDEOS = [
       "I imagine he was told frequently as a young man to contribute his, no doubt extraordinary, intellect elsewhere. In the betterment of the world. Perhaps in writing a book, which are read exclusively by civilised people. That would be the right idea because the movies will never be serious.",
       "Barack Obama named 2001: A Space Odyssey the defining sci-fi of his generation, the Vatican recommends it as a lens for humanity, the richest man on the planet references it as a benchmark for thinking critically about the  defining innovation of the 21st century.",
       "He took the movies seriously, he made the movies serious.",
-      "To take a genuinely new thing that hasn't existed enough yet to be taken seriously, and make it serious, inherently demands a sense of paranoia. Paranoia about the world, which tends to conspire foolishly against inevitable change, and paranoia against oneself, who tends to doubt.",
+      "To take a genuinely new thing that hasn't existed enough yet to be taken seriously, and make it serious, inherently demands a sense of paranoia. Paranoia about the world, which tends to conspire foolishly against inevitable change, and paranoia about oneself, who tends to doubt.",
       "There can only be so many people specific to Kubrick's revolution, but revolutions, in general, are unbelievably common.",
       "In ten years, I wouldn't like to be Kubrick.",
       "I'd like to be paranoid.",
