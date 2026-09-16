@@ -476,7 +476,7 @@
 .panel-stats { display: flex; justify-content: space-around; text-align: center; padding: 0 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
 .panel-stats strong { display: block; font-size: 18px; line-height: 26px; }
 .panel-stats span { color: var(--text-2); font-size: 12px; }
-.panel-body p { margin: 0 0 12px; overflow-wrap: anywhere; }
+.panel-body p { margin: 0 0 12px; overflow-wrap: anywhere; white-space: pre-line; }
 .panel-body .panel-sub { margin-bottom: 16px; }
 
 .reel-nav {
