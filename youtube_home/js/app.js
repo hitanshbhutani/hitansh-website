@@ -147,7 +147,21 @@
   window.addEventListener("popstate", () => render());
 
   // `instant` skips the loading delay, for redraws that aren't a new video
-  function render({ instant = false } = {}) {
+  // the whole page waits a moment behind a loading circle before it appears
+  function pageDelay() {
+    page.classList.add("page-loading");
+    page.insertAdjacentHTML("beforeend", V.spinner.replace('class="spinner"', 'class="spinner page-spinner"'));
+    pageTimer = setTimeout(() => {
+      page.classList.remove("page-loading");
+      const s = $(".page-spinner");
+      if (s) s.remove();
+    }, VST);
+    navProgress();
+  }
+
+  // `firstLoad` gives every page the loading wait when the site is first opened;
+  // pages with their own wait (videos, the Work feed, the channel) keep theirs
+  function render({ instant = false, firstLoad = false } = {}) {
     clearTimeout(playerTimer);
     clearTimeout(reelTimer);
     clearTimeout(pageTimer);
@@ -160,6 +174,7 @@
     const query = q.get("q") || "";
     let key = "";
     let title = C.name;
+    let waited = false;
     body.classList.remove("no-guide", "search-mode");
 
     if (path === "/" || path === "/index.html") {
@@ -184,6 +199,7 @@
       title = item.title + " - " + C.name;
       setupWatch(item, instant);
       if (!instant) navProgress();
+      waited = !instant;
     } else if (/^\/(work|shorts)(\/|$)/.test(path) && itemFor(path.split("/")[2], "short", window.SHORTS)) {
       // old /shorts/ and renamed links still open, under their current /work/ address
       const id = itemFor(path.split("/")[2], "short", window.SHORTS).id;
@@ -194,6 +210,7 @@
       title = window.SHORTS[index].title + " - " + C.name;
       setupReels(index, instant);
       if (!instant) navProgress();
+      waited = !instant;
     } else if (path.startsWith("/" + C.handle)) {
       const given = path.split("/")[2];
       const tab = RENAMED[given] || given;
@@ -202,14 +219,8 @@
       key = "channel";
       // the channel page takes a moment to appear too
       if (!instant) {
-        page.classList.add("page-loading");
-        page.insertAdjacentHTML("beforeend", V.spinner.replace('class="spinner"', 'class="spinner page-spinner"'));
-        pageTimer = setTimeout(() => {
-          page.classList.remove("page-loading");
-          const s = $(".page-spinner");
-          if (s) s.remove();
-        }, VST);
-        navProgress();
+        pageDelay();
+        waited = true;
       }
     } else if (path === "/feed/history") {
       page.innerHTML = V.library("history");
@@ -223,6 +234,7 @@
       page.innerHTML = `<div class="empty"><div class="big">${icon("search")}</div><h2>This page isn't available</h2><p>Sorry about that. <a href="./" data-link style="color:var(--link)">Go back home</a></p></div>`;
     }
 
+    if (firstLoad && !waited) pageDelay();
     if (path !== "/results") setSearchValue("");
     markGuide(key);
     document.title = title;
@@ -803,5 +815,5 @@
 
   // ---------- start ----------
   renderGuide();
-  render();
+  render({ firstLoad: true });
 })();
