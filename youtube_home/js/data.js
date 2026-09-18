@@ -131,7 +131,7 @@ window.SHORTS = [
     hover: "201, 69, 74",
     tags: ["education", "debate"],
     text: [
-      "IIM Bangalore Bachelors in Business Administration\n(Digital Business and Entrepreneurship) - Entrance Examination AIR 36 of 6000+.\n[Distance Learning with In-Person Exams, Graduating 2029]",
+      "IIM Bangalore Bachelors in Business Administration\n(Digital Business and Entrepreneurship) - Entrance Examination AIR 36 of 6000+.\n[Distance Learning with In-Person Exams, Graduating 2028]",
       "IB Diploma - 33 Points (Physics HL, Math AA HL, Chemistry)",
       "CBSE 10th 94.2%",
       "SAT 1540",
