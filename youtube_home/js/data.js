@@ -67,9 +67,9 @@ window.VIDEOS = [
       "Thirteen years after, I had been compelled to audition over 50 actors, have conversations over 20 cinematographers and write for months on end secretly skipping school.",
       "Initially, I suspected this was because I \"liked movies\", but that idea was easily dismissed.",
       "It couldn't be that. Earlier, I had sunken into Procedural Nodes in Blender, Game Development in Godot, Double Exposure film photography. All things capturing, and all things creating.",
-      "Culture is meant to change.",
-      "Culture is meant to be captured.",
-      "Culture is meant to be created.",
+      "Culture is meant to Change.",
+      "Culture is meant to be Captured.",
+      "Culture is meant to be Created.",
     ],
   },
 ];
