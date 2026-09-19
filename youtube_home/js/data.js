@@ -64,7 +64,7 @@ window.VIDEOS = [
       "Four years after it was taken, I started getting really into Minecraft letsplays. I often think about how no Indian seven year old before me could have gotten into Minecraft letsplays.",
       "Eight years after it was taken, I had given up my Tinkles and Diamond Comics' in favour of Batman.",
       "Twelve years after, I was utterly absorbed by Bresson's blocking, Kurosawa's motion, Khondji's illumination and Sorkin's rhythm.",
-      "Thirteen years after, I had been compelled to audition over 50 actors, have conversations over 20 cinematographers and write for months on end secretly skipping school.",
+      "Thirteen years after, I had been compelled to audition over 50 actors, have conversations with over 20 cinematographers about their vision and write for months on end secretly skipping school.",
       "Initially, I suspected this was because I \"liked movies\", but that idea was easily dismissed.",
       "It couldn't be that. Earlier, I had sunken into Procedural Nodes in Blender, Game Development in Godot, Double Exposure film photography. All things capturing, and all things creating.",
       "Culture is meant to Change.",
