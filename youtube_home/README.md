@@ -29,7 +29,7 @@ Search reads straight from `text` and titles, so there's nothing else to update.
 - `css/pages.css` - home grid, shorts, watch page, search results, channel page
 - `js/data.js` - content
 - `img/` - thumbnails, channel picture and banner, resized for the web
-- `img/logo-wordmark.png` - the word Districtansh set in Alt Gothic ATF Demi, used as
+- `img/logo-wordmark.png` - the word Hitansh set in Alt Gothic ATF Demi, used as
   the logo. The font is licensed for images like this but not for putting the font file
   on a website, so it isn't in the repo. To change the word, render a new picture.
 - `js/search.js` - search and autocomplete
@@ -52,11 +52,7 @@ History, likes, saves and theme are kept in the visitor's browser. Older address
 
 ## preview and publish
 
-Two copies of the site:
-
-- **preview** - https://hitanshbhutani.github.io/resume-website/youtube_home/
-  Updates by itself a minute or so after anything is pushed to `main`.
-- **live** - https://districtansh.vercel.app
+- **live** - https://hitanshb.vercel.app
   Only changes when this is run from the repo folder, once each round of changes is pushed:
 
   ```

@@ -164,7 +164,7 @@ img { max-width: 100%; display: block; }
    so it follows the light and dark themes. The real text stays for screen readers. */
 .logo-word {
   display: block;
-  width: 104px;
+  width: 65.22px;
   height: 19.25px;
   margin-left: 4px;
   font-size: 0;
@@ -617,7 +617,7 @@ body.drawer-open .drawer-head { display: flex; }
   .logo-cc { display: none; }
   #bell-btn { display: none; }
   .logo { padding: 18px 6px 18px 10px; }
-  .logo-word { width: 91px; height: 16.85px; }
+  .logo-word { width: 57.08px; height: 16.85px; }
 }
 
 @media (max-width: 350px) {
