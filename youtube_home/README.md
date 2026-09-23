@@ -7,7 +7,7 @@ My resume as a video site homepage. Plain HTML, CSS and JavaScript, no build ste
 Everything that is text lives in `js/data.js`:
 
 - `CHANNEL` - name, picture, banner, and the e-mail and phone shown by Hire
-- `VIEWER` - the signed-in account in the top right (District)
+- `VIEWER` - the signed-in account in the top right
 - `VIDEOS` - the two long videos, Mission and Origins (the Worldview shelf)
 - `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Education, Film
 - each item's `id` is the end of its address, e.g. `mission` in `/worldview/mission`

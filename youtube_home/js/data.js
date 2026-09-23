@@ -17,9 +17,9 @@ window.CHANNEL = {
 
 // The account shown as signed in, top right.
 window.VIEWER = {
-  name: "District Culture",
-  handle: "@district.culture",
-  avatar: "img/viewer-avatar.jpg",
+  name: "You",
+  handle: "@hitanshbhutani",
+  avatar: "img/viewer-avatar.png",
 };
 
 // `views` is shown as written, followed by "views" (or by `viewsLabel` when an item has one).
