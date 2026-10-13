@@ -9,7 +9,7 @@ Everything that is text lives in `js/data.js`:
 - `CHANNEL` - name, picture, banner, and the e-mail and phone shown by Hire
 - `VIEWER` - the signed-in account in the top right
 - `VIDEOS` - the two long videos, Mission and Origins (the Worldview shelf)
-- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Education, Film
+- `SHORTS` - the Work shelf: Parallaxis, Maya Narrative Universe, Film, Education
 - each item's `id` is the end of its address, e.g. `mission` in `/worldview/mission`
 - `text` on each one is what shows when it's opened, one string per paragraph
 - `CHIPS` - the bar under the header: All, Worldview (long videos only), Work (Work only)
